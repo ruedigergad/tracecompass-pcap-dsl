@@ -9,7 +9,7 @@
             id="pcap.dsl.core.trace.type"
             isDirectory="false"
             name="Pcap DSL Trace"
-            trace_type="pcap.dsl.core.TmfTrace1">
+            trace_type="pcap.dsl.core.trace.PcapDslTrace">
       </type>
    </extension>
 
