@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.linuxtools.tmf.core.tracetype">
+      <type
+            category="org.eclipse.linuxtools.tmf.pcap.core.category"
+            event_type="org.eclipse.tracecompass.tmf.core.event.TmfEvent"
+            id="pcap.dsl.core.trace.type"
+            isDirectory="false"
+            name="Pcap DSL Trace"
+            trace_type="pcap.dsl.core.TmfTrace1">
+      </type>
+   </extension>
+
+</plugin>
