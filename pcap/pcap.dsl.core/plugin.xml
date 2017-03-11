@@ -12,5 +12,14 @@
             trace_type="pcap.dsl.core.trace.PcapDslTrace">
       </type>
    </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            category="org.eclipse.linuxtools.tmf.ui.TmfTracingPreferences"
+            class="pcap.dsl.core.ui.preferences.DslPreferencePage"
+            id="pcap.dsl.core.dslPreferencePage"
+            name="Pcap DSL Preference Page">
+      </page>
+   </extension>
 
 </plugin>
