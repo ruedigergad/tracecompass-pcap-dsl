@@ -11,10 +11,12 @@ import org.eclipse.tracecompass.tmf.core.exceptions.TmfTraceException;
 
 import com.google.common.collect.ImmutableList;
 
+import pcap.dsl.core.Activator;
 import pcap.dsl.core.aspects.PcapDslDestinationAspect;
 import pcap.dsl.core.aspects.PcapDslProtocolAspect;
 import pcap.dsl.core.aspects.PcapDslReferenceAspect;
 import pcap.dsl.core.aspects.PcapDslSourceAspect;
+import pcap.dsl.core.config.Constants;
 
 public class PcapDslTrace extends PcapTrace {
 
@@ -31,6 +33,10 @@ public class PcapDslTrace extends PcapTrace {
 	@Override
     public synchronized void initTrace(IResource resource, String path, Class<? extends ITmfEvent> type) throws TmfTraceException {
 		System.out.println("PcapDslTrace.initTrace(...)");
+		
+		final String dslFile = Activator.getDefault().getPreferenceStore().getString(Constants.DSL_FILE_CONFIG_KEY);
+		System.out.println("Using DSL File: " + dslFile);
+		
         super.initTrace(resource, path, type);
 	}
 	

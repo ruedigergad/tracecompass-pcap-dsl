@@ -1,17 +1,16 @@
 package pcap.dsl.core.ui.preferences;
 
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
+import org.eclipse.jface.preference.FileFieldEditor;
 import org.eclipse.jface.preference.StringFieldEditor;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
+import pcap.dsl.core.config.Constants;
+
 public class DslPreferencePage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
 
-	public static final String DSL_EXPRESSION = "dsl_expression";
-	public static final String DSL_EXPRESSION_LABEL = "DSL Expression";
-	
-	
 	public DslPreferencePage() {
 		// TODO Auto-generated constructor stub
 	}
@@ -39,8 +38,8 @@ public class DslPreferencePage extends FieldEditorPreferencePage implements IWor
 
 	@Override
 	protected void createFieldEditors() {
-		StringFieldEditor dslExpressionEditor = new StringFieldEditor(DSL_EXPRESSION, DSL_EXPRESSION_LABEL, getFieldEditorParent());
-        addField(dslExpressionEditor);
+		StringFieldEditor dslExpressionFileEditor = new FileFieldEditor(Constants.DSL_FILE_CONFIG_KEY, Constants.DSL_FILE_CONFIG_LABEL, getFieldEditorParent());
+        addField(dslExpressionFileEditor);
 	}
 
 }
