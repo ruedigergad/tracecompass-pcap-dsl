@@ -7,11 +7,13 @@ import java.nio.file.Paths;
 import java.util.Collection;
 
 import org.eclipse.core.resources.IResource;
+import org.eclipse.tracecompass.internal.pcap.core.trace.BadPcapFileException;
 import org.eclipse.tracecompass.internal.tmf.pcap.core.trace.PcapTrace;
 import org.eclipse.tracecompass.tmf.core.event.ITmfEvent;
 import org.eclipse.tracecompass.tmf.core.event.aspect.ITmfEventAspect;
 import org.eclipse.tracecompass.tmf.core.event.aspect.TmfBaseAspects;
 import org.eclipse.tracecompass.tmf.core.exceptions.TmfTraceException;
+import org.eclipse.tracecompass.tmf.core.trace.TmfTrace;
 
 import com.google.common.collect.ImmutableList;
 
@@ -51,6 +53,12 @@ public class PcapDslTrace extends PcapTrace {
         initDslExtraction();
 
         super.initTrace(resource, path, type);
+
+        try {
+            fPcapFile = new PcapDslFile(Paths.get(path));
+        } catch (BadPcapFileException | IOException e) {
+            throw new TmfTraceException(e.getMessage(), e);
+        }
     }
 
     private void initDslExtraction() {

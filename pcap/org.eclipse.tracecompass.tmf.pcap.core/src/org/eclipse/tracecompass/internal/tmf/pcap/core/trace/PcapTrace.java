@@ -84,7 +84,7 @@ public class PcapTrace extends TmfTrace implements ITmfPropertiesProvider {
 
     private static final String EMPTY_STRING = ""; //$NON-NLS-1$
     private static final int CONFIDENCE = 50;
-    private @Nullable PcapFile fPcapFile;
+    protected @Nullable PcapFile fPcapFile;
     private @Nullable Map<String, String> fTraceProperties = null;
 
     @Override
