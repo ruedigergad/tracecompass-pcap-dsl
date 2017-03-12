@@ -7,11 +7,13 @@ import java.nio.file.Paths;
 import java.util.Collection;
 
 import org.eclipse.core.resources.IResource;
+import org.eclipse.tracecompass.internal.tmf.pcap.core.event.PcapEvent;
 import org.eclipse.tracecompass.internal.tmf.pcap.core.trace.PcapTrace;
 import org.eclipse.tracecompass.tmf.core.event.ITmfEvent;
 import org.eclipse.tracecompass.tmf.core.event.aspect.ITmfEventAspect;
 import org.eclipse.tracecompass.tmf.core.event.aspect.TmfBaseAspects;
 import org.eclipse.tracecompass.tmf.core.exceptions.TmfTraceException;
+import org.eclipse.tracecompass.tmf.core.trace.ITmfContext;
 
 import com.google.common.collect.ImmutableList;
 
@@ -90,5 +92,12 @@ public class PcapDslTrace extends PcapTrace {
     @Override
     public Iterable<ITmfEventAspect<?>> getEventAspects() {
         return PCAP_DSL_ASPECTS;
+    }
+
+    @Override
+    public synchronized PcapEvent parseEvent(ITmfContext context) {
+        final PcapEvent event = super.parseEvent(context);
+        System.out.println("PcapDslTrace.parseEvent(...)");
+        return event;
     }
 }
