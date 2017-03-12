@@ -41,7 +41,7 @@ public class PcapDslTrace extends PcapTrace {
             TmfBaseAspects.getTimestampAspect(), PcapDslSourceAspect.INSTANCE, PcapDslDestinationAspect.INSTANCE,
             PcapDslProtocolAspect.INSTANCE, PcapDslReferenceAspect.INSTANCE, TmfBaseAspects.getContentsAspect());
 
-    IFn dslFn = null;
+    private IFn dslFn = null;
     
     @Override
     public synchronized void initTrace(IResource resource, String path, Class<? extends ITmfEvent> type)
