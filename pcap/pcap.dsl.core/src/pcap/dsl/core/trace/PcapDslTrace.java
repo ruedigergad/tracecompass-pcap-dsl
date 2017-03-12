@@ -15,6 +15,8 @@ import org.eclipse.tracecompass.tmf.core.exceptions.TmfTraceException;
 
 import com.google.common.collect.ImmutableList;
 
+import clojure.lang.IFn;
+import dsbdp.DslHelper;
 import pcap.dsl.core.Activator;
 import pcap.dsl.core.aspects.PcapDslDestinationAspect;
 import pcap.dsl.core.aspects.PcapDslProtocolAspect;
@@ -27,18 +29,20 @@ public class PcapDslTrace extends PcapTrace {
     //@formatter:off
 	private static final String DEFAULT_DSL_EXPRESSION = ""
 	        + "{:output-type :java-map\n"
-			+ " :rules [['dst '(eth-mac-addr-str 16)]\n"
-	        + "         ['src '(eth-mac-addr-str 22)]\n"
-			+ "         ['data [['src '(ipv4-addr-str 42)]\n"
-	        + "                 ['dst '(ipv4-addr-str 46)]\n"
-			+ "                 ['data [['src '(int16 50)]\n"
-	        + "                         ['dst '(int16 52)]]]]]]}";
+			+ " :rules [[dst (eth-mac-addr-str 16)]\n"
+	        + "         [src (eth-mac-addr-str 22)]\n"
+			+ "         [data [[src (ipv4-addr-str 42)]\n"
+	        + "                [dst (ipv4-addr-str 46)]\n"
+			+ "                [data [[src (int16 50)]\n"
+	        + "                       [dst (int16 52)]]]]]]}";
 	//@formatter:on
 
     private static final Collection<ITmfEventAspect<?>> PCAP_DSL_ASPECTS = ImmutableList.of(
             TmfBaseAspects.getTimestampAspect(), PcapDslSourceAspect.INSTANCE, PcapDslDestinationAspect.INSTANCE,
             PcapDslProtocolAspect.INSTANCE, PcapDslReferenceAspect.INSTANCE, TmfBaseAspects.getContentsAspect());
 
+    IFn dslFn = null;
+    
     @Override
     public synchronized void initTrace(IResource resource, String path, Class<? extends ITmfEvent> type)
             throws TmfTraceException {
@@ -73,6 +77,14 @@ public class PcapDslTrace extends PcapTrace {
 
         System.out.println("Using DSL expression: ");
         System.out.println(dslExpression);
+        
+        try {
+            dslFn = DslHelper.generateProcessingFn(dslExpression);
+            System.out.println("Successfully generated processing function.");
+        } catch (Exception e) {
+            System.out.println("Caught exception while generating processing function from DSL.");
+            e.printStackTrace();
+        }
     }
 
     @Override
