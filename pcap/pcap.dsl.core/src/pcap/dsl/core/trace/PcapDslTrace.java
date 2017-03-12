@@ -53,12 +53,6 @@ public class PcapDslTrace extends PcapTrace {
         initDslExtraction();
 
         super.initTrace(resource, path, type);
-
-        try {
-            fPcapFile = new PcapDslFile(Paths.get(path));
-        } catch (BadPcapFileException | IOException e) {
-            throw new TmfTraceException(e.getMessage(), e);
-        }
     }
 
     private void initDslExtraction() {
