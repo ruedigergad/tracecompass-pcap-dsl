@@ -97,7 +97,6 @@ public class PcapDslTrace extends PcapTrace {
     @Override
     public synchronized PcapEvent parseEvent(ITmfContext context) {
         final PcapEvent event = super.parseEvent(context);
-        System.out.println("PcapDslTrace.parseEvent(...)");
         return event;
     }
 }
