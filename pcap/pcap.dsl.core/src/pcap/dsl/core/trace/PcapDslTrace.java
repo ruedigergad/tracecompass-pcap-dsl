@@ -1,14 +1,23 @@
 package pcap.dsl.core.trace;
 
+import static org.eclipse.tracecompass.common.core.NonNullUtils.checkNotNull;
+
 import java.io.IOException;
+import java.nio.channels.ClosedChannelException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collection;
 
 import org.eclipse.core.resources.IResource;
+import org.eclipse.tracecompass.internal.pcap.core.packet.BadPacketException;
+import org.eclipse.tracecompass.internal.pcap.core.protocol.pcap.PcapPacket;
+import org.eclipse.tracecompass.internal.pcap.core.trace.BadPcapFileException;
+import org.eclipse.tracecompass.internal.pcap.core.trace.PcapFile;
 import org.eclipse.tracecompass.internal.tmf.pcap.core.event.PcapEvent;
 import org.eclipse.tracecompass.internal.tmf.pcap.core.trace.PcapTrace;
+import org.eclipse.tracecompass.internal.tmf.pcap.core.util.PcapEventFactory;
 import org.eclipse.tracecompass.tmf.core.event.ITmfEvent;
 import org.eclipse.tracecompass.tmf.core.event.aspect.ITmfEventAspect;
 import org.eclipse.tracecompass.tmf.core.event.aspect.TmfBaseAspects;
@@ -44,7 +53,7 @@ public class PcapDslTrace extends PcapTrace {
             PcapDslProtocolAspect.INSTANCE, PcapDslReferenceAspect.INSTANCE, TmfBaseAspects.getContentsAspect());
 
     private IFn dslFn = null;
-    
+
     @Override
     public synchronized void initTrace(IResource resource, String path, Class<? extends ITmfEvent> type)
             throws TmfTraceException {
@@ -53,6 +62,12 @@ public class PcapDslTrace extends PcapTrace {
         initDslExtraction();
 
         super.initTrace(resource, path, type);
+
+        try {
+            fPcapFile = new PcapDslFile(Paths.get(path));
+        } catch (IOException | BadPcapFileException e) {
+            throw new TmfTraceException(e.getMessage(), e);
+        }
     }
 
     private void initDslExtraction() {
@@ -79,7 +94,7 @@ public class PcapDslTrace extends PcapTrace {
 
         System.out.println("Using DSL expression: ");
         System.out.println(dslExpression);
-        
+
         try {
             dslFn = DslHelper.generateProcessingFn(dslExpression);
             System.out.println("Successfully generated processing function.");
@@ -94,9 +109,51 @@ public class PcapDslTrace extends PcapTrace {
         return PCAP_DSL_ASPECTS;
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * Taken from PcapTrace:
+     * 
+     * @see org.eclipse.tracecompass.internal.tmf.pcap.core.trace.PcapTrace#parseEvent(org.eclipse.tracecompass.tmf.core.trace.ITmfContext)
+     */
     @Override
     public synchronized PcapEvent parseEvent(ITmfContext context) {
-        final PcapEvent event = super.parseEvent(context);
-        return event;
+        if (context == null) {
+            return null;
+        }
+
+        long rank = context.getRank();
+        PcapPacket packet = null;
+        PcapFile pcap = fPcapFile;
+        if (pcap == null) {
+            return null;
+        }
+        try {
+            pcap.seekPacket(rank);
+            packet = pcap.parseNextPacket();
+        } catch (ClosedChannelException e) {
+            /*
+             * This is handled independently and happens when the user closes
+             * the trace while it is being parsed. It simply stops the parsing.
+             * No need to log a error.
+             */
+            return null;
+        } catch (IOException | BadPcapFileException | BadPacketException e) {
+            String message = e.getMessage();
+            if (message == null) {
+                message = "";
+            }
+            System.out.println("Error: " + e.getMessage());
+            e.printStackTrace();
+            return null;
+        }
+
+        if (packet == null) {
+            return null;
+        }
+
+        // Generate an event from this packet and return it.
+        return PcapEventFactory.createEvent(packet, pcap, this);
+
     }
 }
