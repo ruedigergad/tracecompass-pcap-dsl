@@ -112,7 +112,7 @@ public class PcapDslTrace extends PcapTrace {
     /*
      * (non-Javadoc)
      * 
-     * Taken from PcapTrace:
+     * @@@@@ Taken from PcapTrace:
      * 
      * @see org.eclipse.tracecompass.internal.tmf.pcap.core.trace.PcapTrace#parseEvent(org.eclipse.tracecompass.tmf.core.trace.ITmfContext)
      */

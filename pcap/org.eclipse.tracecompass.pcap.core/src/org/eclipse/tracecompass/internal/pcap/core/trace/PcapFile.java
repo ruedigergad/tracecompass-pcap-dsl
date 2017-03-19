@@ -40,8 +40,8 @@ public class PcapFile implements Closeable {
     // TODO Make parsing faster by buffering the data.
 
     private final Path fPcapFilePath;
-    private final ByteOrder fByteOrder;
-    private final SeekableByteChannel fFileChannel;
+    protected final ByteOrder fByteOrder;
+    protected final SeekableByteChannel fFileChannel;
     private final PcapTimestampScale fTimestampPrecision;
 
     private final int fMajorVersion;
@@ -51,10 +51,10 @@ public class PcapFile implements Closeable {
     private final long fSnapshotLength;
     private final long fDataLinkType;
 
-    private final TreeMap<Long, Long> fFileIndex;
+    protected final TreeMap<Long, Long> fFileIndex;
 
-    private long fCurrentRank;
-    private long fTotalNumberPackets;
+    protected long fCurrentRank;
+    protected long fTotalNumberPackets;
 
     /**
      * Constructor of the PcapFile Class.
