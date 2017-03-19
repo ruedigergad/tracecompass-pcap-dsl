@@ -55,6 +55,7 @@ public class PcapDslFile extends PcapFile {
         if (includedPacketLength > Integer.MAX_VALUE) {
             throw new BadPacketException("Packets that are bigger than 2^31-1 bytes are not supported."); //$NON-NLS-1$
         }
+        System.out.println("Included packet length: " + includedPacketLength);
 
         ByteBuffer pcapPacketData = ByteBuffer.allocate((int) includedPacketLength);
         pcapPacketData.clear();
