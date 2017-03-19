@@ -25,12 +25,12 @@ public class PcapDslFile extends PcapFile {
     //@formatter:off
     private static final String DEFAULT_DSL_EXPRESSION = ""
             + "{:output-type :java-map\n"
-            + " :rules [[dst (eth-mac-addr-str 16)]\n"
-            + "         [src (eth-mac-addr-str 22)]\n"
-            + "         [data [[src (ipv4-addr-str 42)]\n"
-            + "                [dst (ipv4-addr-str 46)]\n"
-            + "                [data [[src (int16 50)]\n"
-            + "                       [dst (int16 52)]]]]]]}";
+            + " :rules [[dst (eth-mac-addr-str 0)]\n"
+            + "         [src (eth-mac-addr-str 6)]\n"
+            + "         [data [[src (ipv4-addr-str 26)]\n"
+            + "                [dst (ipv4-addr-str 30)]\n"
+            + "                [data [[src (int16 34)]\n"
+            + "                       [dst (int16 36)]]]]]]}";
     //@formatter:on
     
     private IFn dslFn = null;
