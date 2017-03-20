@@ -21,8 +21,10 @@ import static org.junit.Assume.assumeTrue;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.tracecompass.internal.tmf.pcap.core.event.PcapEvent;
 import org.eclipse.tracecompass.internal.tmf.pcap.core.trace.PcapTrace;
+import org.eclipse.tracecompass.tmf.core.event.ITmfEvent;
 import org.eclipse.tracecompass.tmf.core.exceptions.TmfTraceException;
 import org.eclipse.tracecompass.tmf.core.signal.TmfEndSynchSignal;
 import org.eclipse.tracecompass.tmf.core.signal.TmfSignal;
@@ -93,7 +95,7 @@ public class PcapTraceTest {
     public void testParseEvent() {
         ITmfContext ctx = fFixture.seekEvent(0);
         fFixture.getNext(ctx);
-        PcapEvent event = fFixture.parseEvent(ctx);
+        @Nullable ITmfEvent event = fFixture.parseEvent(ctx);
         assertNotNull(event);
     }
 

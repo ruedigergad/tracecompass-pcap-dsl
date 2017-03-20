@@ -10,9 +10,7 @@ import org.eclipse.tracecompass.internal.pcap.core.packet.BadPacketException;
 import org.eclipse.tracecompass.internal.pcap.core.protocol.pcap.PcapPacket;
 import org.eclipse.tracecompass.internal.pcap.core.trace.BadPcapFileException;
 import org.eclipse.tracecompass.internal.pcap.core.trace.PcapFile;
-import org.eclipse.tracecompass.internal.tmf.pcap.core.event.PcapEvent;
 import org.eclipse.tracecompass.internal.tmf.pcap.core.trace.PcapTrace;
-import org.eclipse.tracecompass.internal.tmf.pcap.core.util.PcapEventFactory;
 import org.eclipse.tracecompass.tmf.core.event.ITmfEvent;
 import org.eclipse.tracecompass.tmf.core.event.aspect.ITmfEventAspect;
 import org.eclipse.tracecompass.tmf.core.event.aspect.TmfBaseAspects;
@@ -25,6 +23,7 @@ import pcap.dsl.core.aspects.PcapDslDestinationAspect;
 import pcap.dsl.core.aspects.PcapDslProtocolAspect;
 import pcap.dsl.core.aspects.PcapDslReferenceAspect;
 import pcap.dsl.core.aspects.PcapDslSourceAspect;
+import pcap.dsl.core.event.PcapDslEvent;
 
 public class PcapDslTrace extends PcapTrace {
 
@@ -59,7 +58,7 @@ public class PcapDslTrace extends PcapTrace {
      * @see org.eclipse.tracecompass.internal.tmf.pcap.core.trace.PcapTrace#parseEvent(org.eclipse.tracecompass.tmf.core.trace.ITmfContext)
      */
     @Override
-    public synchronized PcapEvent parseEvent(ITmfContext context) {
+    public synchronized ITmfEvent parseEvent(ITmfContext context) {
         if (context == null) {
             return null;
         }
@@ -95,7 +94,8 @@ public class PcapDslTrace extends PcapTrace {
         }
 
         // Generate an event from this packet and return it.
-        return PcapEventFactory.createEvent(packet, pcap, this);
+        return new PcapDslEvent(this, rank, null, null, null);
+//        return PcapEventFactory.createEvent(packet, pcap, this);
 
     }
 }

@@ -38,15 +38,14 @@ import org.eclipse.tracecompass.internal.pcap.core.trace.BadPcapFileException;
 import org.eclipse.tracecompass.internal.pcap.core.trace.PcapFile;
 import org.eclipse.tracecompass.internal.pcap.core.util.LinkTypeHelper;
 import org.eclipse.tracecompass.internal.tmf.pcap.core.Activator;
-import org.eclipse.tracecompass.internal.tmf.pcap.core.event.PcapEvent;
 import org.eclipse.tracecompass.internal.tmf.pcap.core.event.aspect.PcapDestinationAspect;
 import org.eclipse.tracecompass.internal.tmf.pcap.core.event.aspect.PcapProtocolAspect;
 import org.eclipse.tracecompass.internal.tmf.pcap.core.event.aspect.PcapReferenceAspect;
 import org.eclipse.tracecompass.internal.tmf.pcap.core.event.aspect.PcapSourceAspect;
 import org.eclipse.tracecompass.internal.tmf.pcap.core.util.PcapEventFactory;
 import org.eclipse.tracecompass.tmf.core.event.ITmfEvent;
-import org.eclipse.tracecompass.tmf.core.event.aspect.TmfBaseAspects;
 import org.eclipse.tracecompass.tmf.core.event.aspect.ITmfEventAspect;
+import org.eclipse.tracecompass.tmf.core.event.aspect.TmfBaseAspects;
 import org.eclipse.tracecompass.tmf.core.exceptions.TmfTraceException;
 import org.eclipse.tracecompass.tmf.core.project.model.ITmfPropertiesProvider;
 import org.eclipse.tracecompass.tmf.core.trace.ITmfContext;
@@ -137,7 +136,7 @@ public class PcapTrace extends TmfTrace implements ITmfPropertiesProvider {
     }
 
     @Override
-    public synchronized @Nullable PcapEvent parseEvent(@Nullable ITmfContext context) {
+    public synchronized @Nullable ITmfEvent parseEvent(@Nullable ITmfContext context) {
         if (context == null) {
             return null;
         }

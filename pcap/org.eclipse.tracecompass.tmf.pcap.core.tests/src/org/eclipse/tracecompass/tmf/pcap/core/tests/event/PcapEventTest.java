@@ -64,7 +64,7 @@ public class PcapEventTest {
         try (PcapFile pcap = new PcapFile(trace.getPath());) {
             PcapTrace pcapTrace = new PcapTrace();
             pcapTrace.initTrace(null, trace.getPath().toString(), PcapEvent.class);
-            fEvent = pcapTrace.parseEvent(new TmfContext(new TmfLongLocation(3), 3));
+            fEvent = (PcapEvent) pcapTrace.parseEvent(new TmfContext(new TmfLongLocation(3), 3));
             pcapTrace.dispose();
         }
 
