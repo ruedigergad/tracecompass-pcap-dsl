@@ -21,7 +21,7 @@ import pcap.dsl.core.Activator;
 import pcap.dsl.core.config.Constants;
 
 public class PcapDslFile extends PcapFile {
-    
+
     //@formatter:off
     private static final String DEFAULT_DSL_EXPRESSION = ""
             + "{:output-type :java-map\n"
@@ -32,7 +32,7 @@ public class PcapDslFile extends PcapFile {
             + "                [data [[src (int16 34)]\n"
             + "                       [dst (int16 36)]]]]]]}";
     //@formatter:on
-    
+
     private IFn dslFn = null;
 
     public PcapDslFile(Path filePath) throws BadPcapFileException, IOException {
@@ -40,18 +40,19 @@ public class PcapDslFile extends PcapFile {
         System.out.println("PcapDslFile(...)");
         initDslExtraction();
     }
-    
+
     /*
      * (non-Javadoc)
      * 
      * @@@@@ Taken from PcapFile:
      * 
-     * @see org.eclipse.tracecompass.internal.pcap.core.trace.PcapFile#parseNextPacket()
+     * @see org.eclipse.tracecompass.internal.pcap.core.trace.PcapFile#
+     * parseNextPacket()
      */
     public synchronized PcapPacket parseNextPacket() throws IOException, BadPcapFileException, BadPacketException {
 
         System.out.println("PcapDslFile.parseNextPacket()");
-        
+
         // Parse the packet header
         if (fFileChannel.size() - fFileChannel.position() == 0) {
             return null;
@@ -86,12 +87,23 @@ public class PcapDslFile extends PcapFile {
 
         pcapPacketData.flip();
 
+        if (pcapPacketData.hasArray()) {
+            System.out.println("Getting byte array data...");
+            byte[] baData = pcapPacketData.array();
+
+            if (dslFn != null) {
+                System.out.println("Processing byte array with DSL fn...");
+                Object dslOut = dslFn.invoke(baData);
+                System.out.println("DSL Output: " + String.valueOf(dslOut));
+            }
+        }
+
         fFileIndex.put(++fCurrentRank, fFileChannel.position());
 
         return new PcapPacket(this, null, pcapPacketHeader, pcapPacketData, fCurrentRank - 1);
 
     }
-    
+
     private void initDslExtraction() {
         final String dslFilePath = Activator.getDefault().getPreferenceStore().getString(Constants.DSL_FILE_CONFIG_KEY);
         System.out.println("Got DSL file path from preferences: " + dslFilePath);
@@ -125,6 +137,5 @@ public class PcapDslFile extends PcapFile {
             e.printStackTrace();
         }
     }
-
 
 }
