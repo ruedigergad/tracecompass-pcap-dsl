@@ -23,7 +23,7 @@ public class PcapDslDestinationAspect implements ITmfEventAspect<String> {
 
 	@Override
 	public String resolve(ITmfEvent event) {
-		return "y";
+		return AspectMapHelper.concatFields(event, "dst");
 	}
 
 }
