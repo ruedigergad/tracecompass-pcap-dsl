@@ -3,7 +3,6 @@ package pcap.dsl.core.event;
 import java.nio.ByteBuffer;
 import java.util.Map;
 
-import org.eclipse.tracecompass.internal.pcap.core.packet.BadPacketException;
 import org.eclipse.tracecompass.internal.pcap.core.protocol.pcap.PcapPacket;
 import org.eclipse.tracecompass.internal.pcap.core.trace.PcapFile;
 import org.eclipse.tracecompass.internal.pcap.core.util.ConversionHelper;
