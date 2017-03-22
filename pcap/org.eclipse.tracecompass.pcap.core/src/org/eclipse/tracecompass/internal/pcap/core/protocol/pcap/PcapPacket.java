@@ -39,8 +39,8 @@ import com.google.common.collect.ImmutableMap;
  */
 public class PcapPacket extends Packet {
 
-    private static final int TIMESTAMP_MICROSECOND_MAX = 1000000;
-    private static final int TIMESTAMP_NANOSECOND_MAX = 1000000000;
+    public static final int TIMESTAMP_MICROSECOND_MAX = 1000000;
+    public static final int TIMESTAMP_NANOSECOND_MAX = 1000000000;
 
     private final @Nullable Packet fChildPacket;
     private final @Nullable ByteBuffer fPayload;
