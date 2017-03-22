@@ -7,6 +7,7 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Map;
 
 import org.eclipse.tracecompass.internal.pcap.core.packet.BadPacketException;
 import org.eclipse.tracecompass.internal.pcap.core.protocol.pcap.PcapPacket;
@@ -22,6 +23,8 @@ import pcap.dsl.core.config.Constants;
 
 public class PcapDslFile extends PcapFile {
 
+    public static final String PCAP_RANK = "__rank";
+    public static final String PCAP_HEADER = "__header";
     //@formatter:off
     private static final String DEFAULT_DSL_EXPRESSION = ""
             + "{:output-type :java-map\n"
@@ -49,9 +52,7 @@ public class PcapDslFile extends PcapFile {
      * @see org.eclipse.tracecompass.internal.pcap.core.trace.PcapFile#
      * parseNextPacket()
      */
-    public synchronized PcapPacket parseNextPacket() throws IOException, BadPcapFileException, BadPacketException {
-
-        System.out.println("PcapDslFile.parseNextPacket()");
+    public synchronized Map<String, Object> parseNextPacketToMap() throws IOException, BadPcapFileException, BadPacketException {
 
         // Parse the packet header
         if (fFileChannel.size() - fFileChannel.position() == 0) {
@@ -78,7 +79,6 @@ public class PcapDslFile extends PcapFile {
         if (includedPacketLength > Integer.MAX_VALUE) {
             throw new BadPacketException("Packets that are bigger than 2^31-1 bytes are not supported."); //$NON-NLS-1$
         }
-        System.out.println("Included packet length: " + includedPacketLength);
 
         ByteBuffer pcapPacketData = ByteBuffer.allocate((int) includedPacketLength);
         pcapPacketData.clear();
@@ -87,6 +87,7 @@ public class PcapDslFile extends PcapFile {
 
         pcapPacketData.flip();
 
+        Map<String, Object> pcapPacketDataMap = null;
         if (pcapPacketData.hasArray()) {
             System.out.println("Getting byte array data...");
             byte[] baData = pcapPacketData.array();
@@ -95,12 +96,20 @@ public class PcapDslFile extends PcapFile {
                 System.out.println("Processing byte array with DSL fn...");
                 Object dslOut = dslFn.invoke(baData);
                 System.out.println("DSL Output: " + String.valueOf(dslOut));
+
+                if (dslOut instanceof Map) {
+                    pcapPacketDataMap = (Map<String, Object>) dslOut;
+                    pcapPacketDataMap.put(PCAP_HEADER, pcapPacketHeader);
+                    pcapPacketDataMap.put(PCAP_RANK, fCurrentRank);
+                }
             }
         }
 
         fFileIndex.put(++fCurrentRank, fFileChannel.position());
 
-        return new PcapPacket(this, null, pcapPacketHeader, pcapPacketData, fCurrentRank - 1);
+        return pcapPacketDataMap;
+        // return new PcapPacket(this, null, pcapPacketHeader, pcapPacketData,
+        // fCurrentRank - 1);
 
     }
 

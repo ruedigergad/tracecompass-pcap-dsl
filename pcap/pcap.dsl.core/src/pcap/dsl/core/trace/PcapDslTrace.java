@@ -4,10 +4,10 @@ import java.io.IOException;
 import java.nio.channels.ClosedChannelException;
 import java.nio.file.Paths;
 import java.util.Collection;
+import java.util.Map;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.tracecompass.internal.pcap.core.packet.BadPacketException;
-import org.eclipse.tracecompass.internal.pcap.core.protocol.pcap.PcapPacket;
 import org.eclipse.tracecompass.internal.pcap.core.trace.BadPcapFileException;
 import org.eclipse.tracecompass.internal.pcap.core.trace.PcapFile;
 import org.eclipse.tracecompass.internal.tmf.pcap.core.trace.PcapTrace;
@@ -25,6 +25,7 @@ import pcap.dsl.core.aspects.PcapDslProtocolAspect;
 import pcap.dsl.core.aspects.PcapDslReferenceAspect;
 import pcap.dsl.core.aspects.PcapDslSourceAspect;
 import pcap.dsl.core.event.PcapDslEvent;
+import pcap.dsl.core.event.PcapDslEventFactory;
 
 public class PcapDslTrace extends PcapTrace {
 
@@ -66,14 +67,16 @@ public class PcapDslTrace extends PcapTrace {
         }
 
         long rank = context.getRank();
-        PcapPacket packet = null;
+        Map<String, Object> packetMap = null;
         PcapFile pcap = fPcapFile;
         if (pcap == null) {
             return null;
         }
         try {
-            pcap.seekPacket(rank);
-            packet = pcap.parseNextPacket();
+            if (pcap instanceof PcapDslFile) {
+                pcap.seekPacket(rank);
+                packetMap = ((PcapDslFile) pcap).parseNextPacketToMap();
+            }
         } catch (ClosedChannelException e) {
             /*
              * This is handled independently and happens when the user closes
@@ -91,12 +94,12 @@ public class PcapDslTrace extends PcapTrace {
             return null;
         }
 
-        if (packet == null) {
+        if (packetMap == null) {
             return null;
         }
 
         // Generate an event from this packet and return it.
-        return new PcapDslEvent(this, rank, null, new TmfEventType("DSL-extracted Pcap Trace", null), null);
+        return PcapDslEventFactory.createEvent(packetMap, pcap, this);
         // return PcapEventFactory.createEvent(packet, pcap, this);
 
     }
