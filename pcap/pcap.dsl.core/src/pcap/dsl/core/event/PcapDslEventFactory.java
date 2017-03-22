@@ -32,7 +32,7 @@ public class PcapDslEventFactory {
         ITmfTimestamp tmfTimestamp = getTimestamp(pcapFile, pcapTrace, packetHeader);
 
         return new PcapDslEvent(pcapTrace, rank, tmfTimestamp, new TmfEventType("DSL-extracted Pcap Trace", null),
-                null);
+                null, packetMap);
     }
 
     private static ITmfTimestamp getTimestamp(PcapFile pcapFile, PcapTrace pcapTrace, ByteBuffer packetHeader) {
