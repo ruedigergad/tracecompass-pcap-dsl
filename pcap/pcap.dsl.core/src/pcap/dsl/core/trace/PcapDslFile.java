@@ -28,11 +28,17 @@ public class PcapDslFile extends PcapFile {
     //@formatter:off
     private static final String DEFAULT_DSL_EXPRESSION = ""
             + "{:output-type :java-map\n"
-            + " :rules [[dst (eth-mac-addr-str 0)]\n"
+            + " :rules [[type (str \"Ethernet\")]\n"
+            + "         [dst (eth-mac-addr-str 0)]\n"
             + "         [src (eth-mac-addr-str 6)]\n"
-            + "         [data [[src (ipv4-addr-str 26)]\n"
+            + "         [data [[type (condp = (int16 12)\n"
+            + "                        0x0800 \"IPv4\")]\n"
+            + "                [src (ipv4-addr-str 26)]\n"
             + "                [dst (ipv4-addr-str 30)]\n"
-            + "                [data [[src (int16 34)]\n"
+            + "                [data [[type (condp = (int8 23)\n"
+            + "                                6 \"TCP\"\n"
+            + "                               17 \"UDP\")]\n"
+            + "                       [src (int16 34)]\n"
             + "                       [dst (int16 36)]]]]]]}";
     //@formatter:on
 

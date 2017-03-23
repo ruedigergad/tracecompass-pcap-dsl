@@ -50,15 +50,25 @@ public class PcapDslEventFactory {
 
         while (tmpMap != null) {
             subfieldList.clear();
+            String subfieldLabel = null;
+
             for (Map.Entry<String, Object> entry : tmpMap.entrySet()) {
                 final String k = entry.getKey();
                 if (k != null && !k.equals(Constants.PACKET_MAP_DATA_KEY) && !k.startsWith("__")) {
                     subfieldList.add(new TmfEventField(k, entry.getValue(), null));
+
+                    if (k.equals(Constants.PACKET_MAP_TYPE_KEY)) {
+                        subfieldLabel = String.valueOf(entry.getValue());
+                    }
                 }
             }
 
+            if (subfieldLabel == null) {
+                subfieldLabel = String.valueOf(nestingLevel);
+            }
+
             ITmfEventField[] subfieldArray = subfieldList.toArray(new ITmfEventField[subfieldList.size()]);
-            fieldList.add(new TmfEventField(String.valueOf(nestingLevel), "", subfieldArray));
+            fieldList.add(new TmfEventField(subfieldLabel, "", subfieldArray));
 
             nestingLevel++;
             Object data = tmpMap.get(Constants.PACKET_MAP_DATA_KEY);
