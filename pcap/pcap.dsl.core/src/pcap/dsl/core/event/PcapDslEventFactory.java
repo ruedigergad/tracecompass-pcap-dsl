@@ -52,7 +52,7 @@ public class PcapDslEventFactory {
             subfieldList.clear();
             for (Map.Entry<String, Object> entry : tmpMap.entrySet()) {
                 final String k = entry.getKey();
-                if (k != null && !k.equals(Constants.PACKET_MAP_DATA_KEY)) {
+                if (k != null && !k.equals(Constants.PACKET_MAP_DATA_KEY) && !k.startsWith("__")) {
                     subfieldList.add(new TmfEventField(k, entry.getValue(), null));
                 }
             }
