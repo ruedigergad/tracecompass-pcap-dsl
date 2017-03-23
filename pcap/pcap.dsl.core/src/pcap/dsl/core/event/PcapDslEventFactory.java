@@ -1,6 +1,8 @@
 package pcap.dsl.core.event;
 
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.tracecompass.internal.pcap.core.protocol.pcap.PcapPacket;
@@ -8,10 +10,13 @@ import org.eclipse.tracecompass.internal.pcap.core.trace.PcapFile;
 import org.eclipse.tracecompass.internal.pcap.core.util.ConversionHelper;
 import org.eclipse.tracecompass.internal.pcap.core.util.PcapTimestampScale;
 import org.eclipse.tracecompass.internal.tmf.pcap.core.trace.PcapTrace;
+import org.eclipse.tracecompass.tmf.core.event.ITmfEventField;
+import org.eclipse.tracecompass.tmf.core.event.TmfEventField;
 import org.eclipse.tracecompass.tmf.core.event.TmfEventType;
 import org.eclipse.tracecompass.tmf.core.timestamp.ITmfTimestamp;
 import org.eclipse.tracecompass.tmf.core.timestamp.TmfTimestamp;
 
+import pcap.dsl.core.config.Constants;
 import pcap.dsl.core.trace.PcapDslFile;
 
 public class PcapDslEventFactory {
@@ -30,9 +35,42 @@ public class PcapDslEventFactory {
         }
 
         ITmfTimestamp tmfTimestamp = getTimestamp(pcapFile, pcapTrace, packetHeader);
+        ITmfEventField rootEventField = createEventFieldContent(packetMap);
 
         return new PcapDslEvent(pcapTrace, rank, tmfTimestamp, new TmfEventType("DSL-extracted Pcap Trace", null),
-                null, packetMap);
+                rootEventField, packetMap);
+    }
+
+    private static ITmfEventField createEventFieldContent(Map<String, Object> packetMap) {
+        List<ITmfEventField> fieldList = new ArrayList<>();
+        List<ITmfEventField> subfieldList = new ArrayList<>();
+
+        Map<String, Object> tmpMap = packetMap;
+        int nestingLevel = 0;
+
+        while (tmpMap != null) {
+            subfieldList.clear();
+            for (Map.Entry<String, Object> entry : tmpMap.entrySet()) {
+                final String k = entry.getKey();
+                if (k != null && !k.equals(Constants.PACKET_MAP_DATA_KEY)) {
+                    subfieldList.add(new TmfEventField(k, entry.getValue(), null));
+                }
+            }
+
+            ITmfEventField[] subfieldArray = subfieldList.toArray(new ITmfEventField[subfieldList.size()]);
+            fieldList.add(new TmfEventField(String.valueOf(nestingLevel), "", subfieldArray));
+
+            nestingLevel++;
+            Object data = tmpMap.get(Constants.PACKET_MAP_DATA_KEY);
+            if (data instanceof Map<?, ?>) {
+                tmpMap = (Map<String, Object>) data;
+            } else {
+                tmpMap = null;
+            }
+        }
+
+        ITmfEventField[] fieldArray = fieldList.toArray(new ITmfEventField[fieldList.size()]);
+        return new TmfEventField(ITmfEventField.ROOT_FIELD_ID, null, fieldArray);
     }
 
     private static ITmfTimestamp getTimestamp(PcapFile pcapFile, PcapTrace pcapTrace, ByteBuffer packetHeader) {

@@ -4,6 +4,7 @@ import java.util.Map;
 
 import org.eclipse.tracecompass.tmf.core.event.ITmfEvent;
 
+import pcap.dsl.core.config.Constants;
 import pcap.dsl.core.event.PcapDslEvent;
 
 public class AspectMapHelper {
@@ -22,7 +23,7 @@ public class AspectMapHelper {
                     sb.append("|");
                 }
 
-                Object data = tmpMap.get("data");
+                Object data = tmpMap.get(Constants.PACKET_MAP_DATA_KEY);
                 if (data instanceof Map<?, ?>) {
                     tmpMap = (Map<String, Object>) data;
                 } else {
