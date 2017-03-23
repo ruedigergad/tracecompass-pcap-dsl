@@ -52,7 +52,7 @@ public class PcapDslFile extends PcapFile {
             + "                                           0)\n"
             + "                                              (conj r# v#)\n"
             + "                                       :default r#)))\n"
-            + "                                []\n"
+            + "                                #{}\n"
             + "                                [\"FIN\" \"SYN\" \"RST\" \"PSH\" \"ACK\" \"URG\" \"ECE\" \"CWR\"])]]]]]]}";
     //@formatter:on
 
