@@ -39,7 +39,21 @@ public class PcapDslFile extends PcapFile {
             + "                                6 \"TCP\"\n"
             + "                               17 \"UDP\")]\n"
             + "                       [src (int16 34)]\n"
-            + "                       [dst (int16 36)]]]]]]}";
+            + "                       [dst (int16 36)]\n"
+            + "                       [flags-value (int8 47)]\n"
+            + "                       [flags (reduce-kv\n"
+            + "                                #=(eval\n"
+            + "                                    `(fn [r# k# v#]\n"
+            + "                                       (cond\n"
+            + "                                         (>\n"
+            + "                                           (bit-and\n"
+            + "                                             (dsbdp.byte-array-conversion/int8 ~'input 47)\n"
+            + "                                             (bit-shift-left 1 k#))\n"
+            + "                                           0)\n"
+            + "                                              (conj r# v#)\n"
+            + "                                       :default r#)))\n"
+            + "                                []\n"
+            + "                                [\"FIN\" \"SYN\" \"RST\" \"PSH\" \"ACK\" \"URG\" \"ECE\" \"CWR\"])]]]]]]}";
     //@formatter:on
 
     private IFn dslFn = null;
@@ -58,7 +72,8 @@ public class PcapDslFile extends PcapFile {
      * @see org.eclipse.tracecompass.internal.pcap.core.trace.PcapFile#
      * parseNextPacket()
      */
-    public synchronized Map<String, Object> parseNextPacketToMap() throws IOException, BadPcapFileException, BadPacketException {
+    public synchronized Map<String, Object> parseNextPacketToMap()
+            throws IOException, BadPcapFileException, BadPacketException {
 
         // Parse the packet header
         if (fFileChannel.size() - fFileChannel.position() == 0) {
