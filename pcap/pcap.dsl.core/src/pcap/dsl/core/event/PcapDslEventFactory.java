@@ -68,7 +68,7 @@ public class PcapDslEventFactory {
             }
 
             ITmfEventField[] subfieldArray = subfieldList.toArray(new ITmfEventField[subfieldList.size()]);
-            fieldList.add(new TmfEventField(subfieldLabel, "", subfieldArray));
+            fieldList.add(new PcapDslEventField(subfieldLabel, "", subfieldArray, tmpMap));
 
             nestingLevel++;
             Object data = tmpMap.get(Constants.PACKET_MAP_DATA_KEY);

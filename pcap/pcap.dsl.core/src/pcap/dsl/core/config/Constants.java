@@ -7,5 +7,6 @@ public class Constants {
 
     public static final String PACKET_MAP_DATA_KEY = "data";
     public static final String PACKET_MAP_PROTOCOL_KEY = "protocol";
+    public static final String PACKET_MAP_SUMMARY_KEY = "summary";
 
 }
