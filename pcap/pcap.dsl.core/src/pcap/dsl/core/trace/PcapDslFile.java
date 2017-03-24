@@ -28,18 +28,18 @@ public class PcapDslFile extends PcapFile {
     //@formatter:off
     private static final String DEFAULT_DSL_EXPRESSION = ""
             + "{:output-type :java-map\n"
-            + " :rules [[type (str \"Ethernet\")]\n"
+            + " :rules [[protocol (str \"Ethernet\")]\n"
             + "         [dst (eth-mac-addr-str 0)]\n"
             + "         [src (eth-mac-addr-str 6)]\n"
-            + "         [data [[type (condp = (int16 12)\n"
-            + "                        0x0800 \"IPv4\"\n"
-            + "                        0x0806 \"ARP\"\n"
-            + "                        0x86DD \"IPv6\")]\n"
+            + "         [data [[protocol (condp = (int16 12)\n"
+            + "                            0x0800 \"IPv4\"\n"
+            + "                            0x0806 \"ARP\"\n"
+            + "                            0x86DD \"IPv6\")]\n"
             + "                [src (ipv4-addr-str 26)]\n"
             + "                [dst (ipv4-addr-str 30)]\n"
-            + "                [data [[type (condp = (int8 23)\n"
-            + "                                6 \"TCP\"\n"
-            + "                               17 \"UDP\")]\n"
+            + "                [data [[protocol (condp = (int8 23)\n"
+            + "                                    6 \"TCP\"\n"
+            + "                                   17 \"UDP\")]\n"
             + "                       [src (int16 34)]\n"
             + "                       [dst (int16 36)]\n"
             + "                       [flags-value (int8 47)]\n"
@@ -55,7 +55,10 @@ public class PcapDslFile extends PcapFile {
             + "                                              (conj r# v#)\n"
             + "                                       :default r#)))\n"
             + "                                #{}\n"
-            + "                                [\"FIN\" \"SYN\" \"RST\" \"PSH\" \"ACK\" \"URG\" \"ECE\" \"CWR\"])]]]]]]}";
+            + "                                [\"FIN\" \"SYN\" \"RST\" \"PSH\" \"ACK\" \"URG\" \"ECE\" \"CWR\"])]\n"
+            + "                       [summary (str __2_protocol __2_flags \": \" __2_src \" -> \" __2_dst)]]]\n"
+            + "                [summary (str __1_protocol \": \" __1_src \" -> \" __1_dst)]]]\n"
+            + "         [summary (str protocol \": \" src \" -> \" dst)]]}";
     //@formatter:on
 
     private IFn dslFn = null;

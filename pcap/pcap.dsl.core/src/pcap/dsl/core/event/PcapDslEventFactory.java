@@ -57,7 +57,7 @@ public class PcapDslEventFactory {
                 if (k != null && !k.equals(Constants.PACKET_MAP_DATA_KEY) && !k.startsWith("__")) {
                     subfieldList.add(new TmfEventField(k, entry.getValue(), null));
 
-                    if (k.equals(Constants.PACKET_MAP_TYPE_KEY)) {
+                    if (k.equals(Constants.PACKET_MAP_PROTOCOL_KEY)) {
                         subfieldLabel = String.valueOf(entry.getValue());
                     }
                 }
