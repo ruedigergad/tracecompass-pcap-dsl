@@ -144,6 +144,13 @@ public class StreamListView extends TmfView {
     }
 
     /**
+     * Constructor of the StreamListView class.
+     */
+    public StreamListView(String id) {
+        super(id);
+    }
+
+    /**
      * Handler called when an trace is opened.
      *
      * @param signal

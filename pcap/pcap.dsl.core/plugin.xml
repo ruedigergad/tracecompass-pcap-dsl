@@ -47,9 +47,9 @@
             allowMultiple="false"
             category="org.eclipse.linuxtools.tmf.pcap.ui.view.category.network"
             class="pcap.dsl.ui.view.DslStreamListView"
-            icon="icons/stream_list_view.gif"
+            icon="platform:/plugin/org.eclipse.tracecompass.tmf.pcap.ui/icons/stream_list_view.gif"
             id="pcap.dsl.ui.view.stream.list"
-            name="%view.stream.list"
+            name="DSL Stream List"
             restorable="true">
       </view>
    </extension>
