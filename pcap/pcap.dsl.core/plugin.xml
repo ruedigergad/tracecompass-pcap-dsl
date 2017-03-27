@@ -21,5 +21,37 @@
             name="Pcap DSL Preference Page">
       </page>
    </extension>
+   <extension
+         point="org.eclipse.linuxtools.tmf.core.analysis">
+      <module
+            analysis_module="pcap.dsl.core.analysis.DslStreamListAnalysis"
+            automatic="true"
+            id="pcap.dsl.core.analysis.stream"
+            name="DSL Stream List">
+         <tracetype
+               applies="true"
+               class="pcap.dsl.core.trace.PcapDslTrace">
+         </tracetype>
+      </module>
+      <output
+            class="org.eclipse.tracecompass.tmf.ui.analysis.TmfAnalysisViewOutput"
+            id="pcap.dsl.ui.view.stream.list">
+         <analysisModuleClass
+               class="pcap.dsl.core.analysis.DslStreamListAnalysis">
+         </analysisModuleClass>
+      </output>
+   </extension>
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            allowMultiple="false"
+            category="org.eclipse.linuxtools.tmf.pcap.ui.view.category.network"
+            class="pcap.dsl.ui.view.DslStreamListView"
+            icon="icons/stream_list_view.gif"
+            id="pcap.dsl.ui.view.stream.list"
+            name="%view.stream.list"
+            restorable="true">
+      </view>
+   </extension>
 
 </plugin>
