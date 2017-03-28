@@ -61,6 +61,10 @@ public abstract class ProtocolEndpoint {
         }
     }
 
+    public ProtocolEndpoint(ProtocolEndpoint parent) {
+        fParentEndpoint = parent;
+    }
+
     /**
      * Getter method that returns the parent endpoint.
      *
