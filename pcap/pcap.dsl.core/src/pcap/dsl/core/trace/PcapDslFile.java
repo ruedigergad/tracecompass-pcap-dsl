@@ -115,13 +115,13 @@ public class PcapDslFile extends PcapFile {
 
         Map<String, Object> pcapPacketDataMap = null;
         if (pcapPacketData.hasArray()) {
-            System.out.println("Getting byte array data...");
+//            System.out.println("Getting byte array data...");
             byte[] baData = pcapPacketData.array();
 
             if (dslFn != null) {
-                System.out.println("Processing byte array with DSL fn...");
+                //System.out.println("Processing byte array with DSL fn...");
                 Object dslOut = dslFn.invoke(baData);
-                System.out.println("DSL Output: " + String.valueOf(dslOut));
+                //System.out.println("DSL Output: " + String.valueOf(dslOut));
 
                 if (dslOut instanceof Map) {
                     pcapPacketDataMap = (Map<String, Object>) dslOut;

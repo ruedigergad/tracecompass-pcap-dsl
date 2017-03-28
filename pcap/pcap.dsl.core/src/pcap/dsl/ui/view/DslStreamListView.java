@@ -70,6 +70,9 @@ import org.eclipse.ui.PlatformUI;
 
 import com.google.common.collect.Lists;
 
+import pcap.dsl.core.analysis.DslStreamListAnalysis;
+import pcap.dsl.core.trace.PcapDslTrace;
+
 /**
  * Class that represents the Stream List View. Such a view lists all the
  * available streams from the current experiment. <br>
@@ -132,7 +135,7 @@ public class DslStreamListView extends TmfView {
     private  Map<TmfPcapProtocol, Table> fTableMap;
 
     private  TmfPacketStream fCurrentStream;
-    private  ITmfTrace fCurrentTrace;
+    private  PcapDslTrace fCurrentTrace;
 
     private volatile boolean fStopThread;
 
@@ -152,7 +155,15 @@ public class DslStreamListView extends TmfView {
      */
     @TmfSignalHandler
     public void traceOpened(TmfTraceOpenedSignal signal) {
-        fCurrentTrace = signal.getTrace();
+        System.out.println("DslStreamListView.traceOpened()");
+        Object currentTrace = signal.getTrace();
+        System.out.println("Trace type: " + currentTrace.getClass().getName());
+        
+        if (!(currentTrace instanceof PcapDslTrace)) {
+            throw new UnsupportedOperationException("DslStreamListView only supports PcapDslTrace instances.");
+        }
+        
+        fCurrentTrace = (PcapDslTrace) currentTrace;
         resetView();
         queryAnalysis();
     }
@@ -181,8 +192,9 @@ public class DslStreamListView extends TmfView {
      */
     @TmfSignalHandler
     public void traceSelected(TmfTraceSelectedSignal signal) {
-        if (fCurrentTrace != signal.getTrace()) {
-            fCurrentTrace = signal.getTrace();
+        Object newTrace = signal.getTrace();
+        if (fCurrentTrace != newTrace && (newTrace instanceof PcapDslTrace)) {
+            fCurrentTrace = (PcapDslTrace) newTrace;
             resetView();
             queryAnalysis();
         }
@@ -197,7 +209,7 @@ public class DslStreamListView extends TmfView {
                 if (trace == null) {
                     return;
                 }
-                StreamListAnalysis analysis = TmfTraceUtils.getAnalysisModuleOfClass(trace, StreamListAnalysis.class, StreamListAnalysis.ID);
+                DslStreamListAnalysis analysis = TmfTraceUtils.getAnalysisModuleOfClass(trace, DslStreamListAnalysis.class, DslStreamListAnalysis.ID);
                 if (analysis == null) {
                     return;
                 }
@@ -273,7 +285,7 @@ public class DslStreamListView extends TmfView {
                     return;
                 }
 
-                StreamListAnalysis analysis = TmfTraceUtils.getAnalysisModuleOfClass(trace, StreamListAnalysis.class, StreamListAnalysis.ID);
+                DslStreamListAnalysis analysis = TmfTraceUtils.getAnalysisModuleOfClass(trace, DslStreamListAnalysis.class, DslStreamListAnalysis.ID);
                 if (analysis == null) {
                     return;
                 }
@@ -323,7 +335,15 @@ public class DslStreamListView extends TmfView {
         // Initialize
         final Map<TmfPcapProtocol, Table> tables = new HashMap<>();
         fTableMap = tables;
-        fCurrentTrace = TmfTraceManager.getInstance().getActiveTrace();
+        
+        
+//        Object activeTrace = TmfTraceManager.getInstance().getActiveTrace();
+//        System.out.println("Active trace: " + activeTrace.getClass().getName());
+//        if (!(activeTrace instanceof PcapDslTrace)) {
+//            throw new UnsupportedOperationException("DslStreamListView only supports PcapDslTrace instances.");
+//        }
+//        fCurrentTrace = (PcapDslTrace) activeTrace;
+        
         fCurrentStream = null;
 
         // Add a tab folder
