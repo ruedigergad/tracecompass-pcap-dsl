@@ -77,6 +77,7 @@ import pcap.dsl.core.analysis.DslStreamListAnalysis;
 import pcap.dsl.core.config.Constants;
 import pcap.dsl.core.event.PcapDslEvent;
 import pcap.dsl.core.trace.PcapDslTrace;
+import pcap.dsl.core.util.Helper;
 
 /**
  * Class that represents the Stream List View. Such a view lists all the
@@ -340,55 +341,7 @@ public class DslStreamListView extends TmfView {
         }
         System.out.println("Creating content...");
 
-        Map<String, Integer> protocolMap = new HashMap<>();
-        if (fCurrentTrace != null) {
-            // ITmfEventRequest request = fRequest;
-            // if ((request != null) && (!request.isCompleted())) {
-            // request.cancel();
-            // }
-
-            ITmfEventRequest request = new TmfEventRequest(PcapDslEvent.class, TmfTimeRange.ETERNITY, 0L,
-                    ITmfEventRequest.ALL_DATA, ITmfEventRequest.ExecutionType.BACKGROUND) {
-
-                @Override
-                public void handleData(ITmfEvent data) {
-                    // Called for each event
-                    super.handleData(data);
-                    if (!(data instanceof PcapDslEvent)) {
-                        return;
-                    }
-                    PcapDslEvent event = (PcapDslEvent) data;
-
-                    int nestingLevel = 0;
-                    Map<String, Object> tmpMap = event.getPacketMap();
-                    while (tmpMap != null) {
-                        Object proto = tmpMap.get(Constants.PACKET_MAP_PROTOCOL_KEY);
-                        if (proto instanceof String && !protocolMap.containsKey(proto)) {
-                            protocolMap.put((String) proto, nestingLevel);
-                        }
-
-                        Object tmpData = tmpMap.get(Constants.PACKET_MAP_DATA_KEY);
-                        if (tmpData instanceof Map<?, ?>) {
-                            tmpMap = (Map<String, Object>) tmpData;
-                        } else {
-                            tmpMap = null;
-                        }
-                        nestingLevel++;
-                    }
-                }
-            };
-            fCurrentTrace.sendRequest(request);
-
-            try {
-                request.waitForCompletion();
-            } catch (InterruptedException e) {
-                // Request was canceled.
-                return;
-            }
-
-            System.out.println("Got protocolMap: " + String.valueOf(protocolMap));
-            fProtocolMap = protocolMap;
-        }
+        this.fProtocolMap = Helper.getProtocolMap(fCurrentTrace);
 
         // Initialize
         final Map<String, Table> tables = new HashMap<>();
