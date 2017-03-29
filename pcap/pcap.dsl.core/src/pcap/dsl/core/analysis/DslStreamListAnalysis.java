@@ -18,10 +18,6 @@ import java.util.Map;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.tracecompass.internal.tmf.pcap.core.event.PcapEvent;
-import org.eclipse.tracecompass.internal.tmf.pcap.core.event.TmfPacketStreamBuilder;
-import org.eclipse.tracecompass.internal.tmf.pcap.core.protocol.TmfPcapProtocol;
-import org.eclipse.tracecompass.internal.tmf.pcap.core.trace.PcapTrace;
 import org.eclipse.tracecompass.tmf.core.analysis.TmfAbstractAnalysisModule;
 import org.eclipse.tracecompass.tmf.core.event.ITmfEvent;
 import org.eclipse.tracecompass.tmf.core.exceptions.TmfAnalysisException;
@@ -31,7 +27,10 @@ import org.eclipse.tracecompass.tmf.core.timestamp.TmfTimeRange;
 import org.eclipse.tracecompass.tmf.core.trace.ITmfTrace;
 import org.eclipse.tracecompass.tmf.core.trace.experiment.TmfExperiment;
 
+import pcap.dsl.core.event.PcapDslEvent;
+import pcap.dsl.core.stream.DslPacketMapStreamBuilder;
 import pcap.dsl.core.trace.PcapDslTrace;
+import pcap.dsl.core.util.Helper;
 
 /**
  * A pcap-specific analysis that parse an entire trace to find all the streams.
@@ -46,7 +45,7 @@ public class DslStreamListAnalysis extends TmfAbstractAnalysisModule {
     public static final String ID = "pcap.dsl.core.analysis.stream"; //$NON-NLS-1$
 
     private ITmfEventRequest fRequest;
-    private final Map<String, TmfPacketStreamBuilder> fBuilders = new HashMap<>();
+    private final Map<String, DslPacketMapStreamBuilder> fBuilders = new HashMap<>();
 
     /**
      * The default constructor. It initializes all variables.
@@ -74,7 +73,7 @@ public class DslStreamListAnalysis extends TmfAbstractAnalysisModule {
         TmfExperiment experiment = (TmfExperiment) trace;
         List<ITmfTrace> traces = experiment.getTraces();
         for (ITmfTrace expTrace : traces) {
-            if (expTrace instanceof PcapTrace) {
+            if (expTrace instanceof PcapDslTrace) {
                 return true;
             }
         }
@@ -87,13 +86,19 @@ public class DslStreamListAnalysis extends TmfAbstractAnalysisModule {
     protected boolean executeAnalysis(IProgressMonitor monitor) throws TmfAnalysisException {
         System.out.println("DslStreamListAnalysis.executeAnalysis(...)");
         
-        this.fBuilders.clear();
-        
         IProgressMonitor mon = (monitor == null ? new NullProgressMonitor() : monitor);
-        ITmfTrace trace = getTrace();
-        if (trace == null) {
+        ITmfTrace tmpTrace = getTrace();
+        if (!(tmpTrace instanceof PcapDslTrace)) {
             /* This analysis was cancelled in the meantime */
             return false;
+        }
+        
+        PcapDslTrace trace = (PcapDslTrace) tmpTrace;
+        
+        this.fBuilders.clear();
+        Map<String, Integer> protocols = Helper.getProtocolMap(trace);
+        for (Map.Entry<String, Integer> e : protocols.entrySet()) {
+            this.fBuilders.put(e.getKey(), new DslPacketMapStreamBuilder(e.getKey(), e.getValue()));
         }
 
         ITmfEventRequest request = fRequest;
@@ -101,7 +106,7 @@ public class DslStreamListAnalysis extends TmfAbstractAnalysisModule {
             request.cancel();
         }
 
-        request = new TmfEventRequest(PcapEvent.class,
+        request = new TmfEventRequest(PcapDslEvent.class,
                 TmfTimeRange.ETERNITY, 0L, ITmfEventRequest.ALL_DATA,
                 ITmfEventRequest.ExecutionType.BACKGROUND) {
 
@@ -109,11 +114,11 @@ public class DslStreamListAnalysis extends TmfAbstractAnalysisModule {
             public void handleData(ITmfEvent data) {
                 // Called for each event
                 super.handleData(data);
-                if (!(data instanceof PcapEvent)) {
+                if (!(data instanceof PcapDslEvent)) {
                     return;
                 }
-                PcapEvent event = (PcapEvent) data;
-                for (Map.Entry<String, TmfPacketStreamBuilder> entry : fBuilders.entrySet()) {
+                PcapDslEvent event = (PcapDslEvent) data;
+                for (Map.Entry<String, DslPacketMapStreamBuilder> entry : fBuilders.entrySet()) {
                     entry.getValue().addEventToStream(event);
                 }
 
@@ -148,7 +153,7 @@ public class DslStreamListAnalysis extends TmfAbstractAnalysisModule {
      *            The specified protocol.
      * @return The builder.
      */
-    public TmfPacketStreamBuilder getBuilder(TmfPcapProtocol protocol) {
+    public DslPacketMapStreamBuilder getBuilder(String protocol) {
         return fBuilders.get(protocol);
     }
 
