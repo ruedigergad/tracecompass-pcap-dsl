@@ -17,10 +17,26 @@ public class Helper {
     private Helper() {
         // No instances allowed of Helper class.
     }
-    
+
+    public static Map<String, Object> getNestedMap(Map<String, Object> parentMap, int nestingLevel) {
+        Map<String, Object> tmpMap = parentMap;
+        int currentNestingLevel = 0;
+
+        while (tmpMap != null && currentNestingLevel < nestingLevel) {
+            if (tmpMap.get(Constants.PACKET_MAP_DATA_KEY) instanceof Map<?, ?>) {
+                tmpMap = (Map<String, Object>) tmpMap.get(Constants.PACKET_MAP_DATA_KEY);
+                currentNestingLevel++;
+            } else {
+                tmpMap = null;
+            }
+        }
+
+        return tmpMap;
+    }
+
     public static Map<String, Integer> getProtocolMap(PcapDslTrace trace) {
         Map<String, Integer> protocolMap = new HashMap<>();
-        
+
         if (trace != null) {
             // ITmfEventRequest request = fRequest;
             // if ((request != null) && (!request.isCompleted())) {
@@ -68,7 +84,7 @@ public class Helper {
 
             System.out.println("Got protocolMap: " + String.valueOf(protocolMap));
         }
-        
+
         return protocolMap;
     }
 }
