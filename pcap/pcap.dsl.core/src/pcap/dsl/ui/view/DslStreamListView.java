@@ -14,7 +14,6 @@ package pcap.dsl.ui.view;
  *******************************************************************************/
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -25,57 +24,23 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.Menu;
-import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
-import org.eclipse.tracecompass.internal.tmf.pcap.core.event.PcapEvent;
 import org.eclipse.tracecompass.internal.tmf.pcap.core.event.TmfPacketStream;
-import org.eclipse.tracecompass.internal.tmf.pcap.core.event.TmfPacketStreamBuilder;
-import org.eclipse.tracecompass.internal.tmf.pcap.core.event.aspect.PcapDestinationAspect;
-import org.eclipse.tracecompass.internal.tmf.pcap.core.event.aspect.PcapSourceAspect;
-import org.eclipse.tracecompass.internal.tmf.pcap.core.protocol.TmfPcapProtocol;
-import org.eclipse.tracecompass.internal.tmf.pcap.core.signal.TmfPacketStreamSelectedSignal;
-import org.eclipse.tracecompass.internal.tmf.pcap.core.trace.PcapTrace;
 import org.eclipse.tracecompass.internal.tmf.pcap.ui.Activator;
 import org.eclipse.tracecompass.internal.tmf.pcap.ui.stream.Messages;
-import org.eclipse.tracecompass.tmf.core.event.ITmfEvent;
-import org.eclipse.tracecompass.tmf.core.event.aspect.TmfBaseAspects;
-import org.eclipse.tracecompass.tmf.core.filter.model.ITmfFilterTreeNode;
-import org.eclipse.tracecompass.tmf.core.filter.model.TmfFilterAndNode;
-import org.eclipse.tracecompass.tmf.core.filter.model.TmfFilterAspectNode;
-import org.eclipse.tracecompass.tmf.core.filter.model.TmfFilterContainsNode;
-import org.eclipse.tracecompass.tmf.core.filter.model.TmfFilterNode;
-import org.eclipse.tracecompass.tmf.core.filter.model.TmfFilterOrNode;
-import org.eclipse.tracecompass.tmf.core.request.ITmfEventRequest;
-import org.eclipse.tracecompass.tmf.core.request.TmfEventRequest;
-import org.eclipse.tracecompass.tmf.core.signal.TmfSignal;
 import org.eclipse.tracecompass.tmf.core.signal.TmfSignalHandler;
-import org.eclipse.tracecompass.tmf.core.signal.TmfSignalManager;
 import org.eclipse.tracecompass.tmf.core.signal.TmfTraceClosedSignal;
 import org.eclipse.tracecompass.tmf.core.signal.TmfTraceOpenedSignal;
 import org.eclipse.tracecompass.tmf.core.signal.TmfTraceSelectedSignal;
-import org.eclipse.tracecompass.tmf.core.timestamp.TmfTimeRange;
 import org.eclipse.tracecompass.tmf.core.trace.ITmfTrace;
 import org.eclipse.tracecompass.tmf.core.trace.TmfTraceUtils;
-import org.eclipse.tracecompass.tmf.ui.project.model.TraceUtils;
 import org.eclipse.tracecompass.tmf.ui.views.TmfView;
-import org.eclipse.tracecompass.tmf.ui.views.filter.FilterManager;
-import org.eclipse.tracecompass.tmf.ui.views.filter.FilterView;
-import org.eclipse.ui.IViewPart;
-import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.PlatformUI;
-
-import com.google.common.collect.Lists;
 
 import pcap.dsl.core.analysis.DslStreamListAnalysis;
-import pcap.dsl.core.config.Constants;
-import pcap.dsl.core.event.PcapDslEvent;
+import pcap.dsl.core.stream.DslPacketMapStream;
+import pcap.dsl.core.stream.DslPacketMapStreamBuilder;
 import pcap.dsl.core.trace.PcapDslTrace;
 import pcap.dsl.core.util.Helper;
 
@@ -282,42 +247,39 @@ public class DslStreamListView extends TmfView {
                 if (tables == null) {
                     return;
                 }
-                // for (Entry<String, Table> protocolEntry : tables.entrySet())
-                // {
-                // TmfPcapProtocol protocol = protocolEntry.getKey();
-                // TmfPacketStreamBuilder builder =
-                // analysis.getBuilder(protocol);
-                // Table table = protocolEntry.getValue();
-                // if (builder != null && !(table.isDisposed())) {
-                // for (TmfPacketStream stream : builder.getStreams()) {
-                //
-                // TableItem item;
-                // if (stream.getID() < table.getItemCount()) {
-                // item = table.getItem(stream.getID());
-                // } else {
-                // item = new TableItem(table, SWT.NONE);
-                // }
-                // item.setText(0, String.valueOf(stream.getID()));
-                // item.setText(1, stream.getFirstEndpoint().toString());
-                // item.setText(2, stream.getSecondEndpoint().toString());
-                // item.setText(3, String.valueOf(stream.getNbPackets()));
-                // item.setText(4, String.valueOf(stream.getNbBytes()));
-                // item.setText(5, String.valueOf(stream.getNbPacketsAtoB()));
-                // item.setText(6, String.valueOf(stream.getNbBytesAtoB()));
-                // item.setText(7, String.valueOf(stream.getNbPacketsBtoA()));
-                // item.setText(8, String.valueOf(stream.getNbBytesBtoA()));
-                // item.setText(9, stream.getStartTime().toString());
-                // item.setText(10, stream.getStopTime().toString());
-                // item.setText(11, String.format("%.3f",
-                // stream.getDuration())); //$NON-NLS-1$
-                // item.setText(12, String.format("%.3f", stream.getBPSAtoB()));
-                // //$NON-NLS-1$
-                // item.setText(13, String.format("%.3f", stream.getBPSBtoA()));
-                // //$NON-NLS-1$
-                // item.setData(KEY_STREAM, stream);
-                // }
-                // }
-                // }
+                for (Entry<String, Table> protocolEntry : tables.entrySet()) {
+                    String protocol = protocolEntry.getKey();
+                    DslPacketMapStreamBuilder builder = analysis.getBuilder(protocol);
+                    Table table = protocolEntry.getValue();
+                    if (builder != null && !(table.isDisposed())) {
+                        for (DslPacketMapStream stream : builder.getStreams()) {
+
+                            TableItem item;
+                            if (stream.getID() < table.getItemCount()) {
+                                item = table.getItem(stream.getID());
+                            } else {
+                                item = new TableItem(table, SWT.NONE);
+                            }
+                            item.setText(0, String.valueOf(stream.getID()));
+                            item.setText(1, String.valueOf(stream.getAAddress()));
+                            item.setText(2, String.valueOf(stream.getBAddress()));
+                            item.setText(3, String.valueOf(stream.getNbPackets()));
+                            item.setText(4, String.valueOf(stream.getNbBytes()));
+                            item.setText(5, String.valueOf(stream.getNbPacketsAtoB()));
+                            item.setText(6, String.valueOf(stream.getNbBytesAtoB()));
+                            item.setText(7, String.valueOf(stream.getNbPacketsBtoA()));
+                            item.setText(8, String.valueOf(stream.getNbBytesBtoA()));
+                            item.setText(9, String.valueOf(stream.getStartTime()));
+                            item.setText(10, String.valueOf(stream.getStopTime()));
+                            item.setText(11, String.format("%.3f", stream.getDuration())); // $NON-NLS-1$
+                            item.setText(12, String.format("%.3f", stream.getBPSAtoB()));
+                            // $NON-NLS-1$
+                            item.setText(13, String.format("%.3f", stream.getBPSBtoA()));
+                            // $NON-NLS-1$
+//                            item.setData(KEY_STREAM, stream);
+                        }
+                    }
+                }
             }
 
         });

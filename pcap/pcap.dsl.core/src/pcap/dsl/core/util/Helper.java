@@ -87,4 +87,24 @@ public class Helper {
 
         return protocolMap;
     }
+
+    public static String getMergedString(Map<String, Object> packetMap, String key, int nestingLevel) {
+        StringBuilder sb = new StringBuilder();
+        Map<String, Object> tmpMap = packetMap;
+        int currentNestingLevel = 0;
+
+        while (tmpMap != null && currentNestingLevel <= nestingLevel) {
+            if (tmpMap.containsKey(key) && tmpMap.get(Constants.PACKET_MAP_DATA_KEY) instanceof Map<?, ?>) {
+                sb.append(tmpMap.get(key));
+                sb.append(Constants.SEPARATOR);
+                
+                tmpMap = (Map<String, Object>) tmpMap.get(Constants.PACKET_MAP_DATA_KEY);
+                currentNestingLevel++;
+            } else {
+                tmpMap = null;
+            }
+        }
+
+        return sb.toString();
+    }
 }
