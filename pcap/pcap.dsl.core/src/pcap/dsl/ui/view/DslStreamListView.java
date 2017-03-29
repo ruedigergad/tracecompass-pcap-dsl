@@ -217,7 +217,6 @@ public class DslStreamListView extends TmfView {
                 if (!fStopThread) {
                     updateUI();
                 }
-
             }
         });
 
