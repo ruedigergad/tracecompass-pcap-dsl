@@ -34,53 +34,48 @@ public class PcapDslEventFactory {
             rank = (long) packetMap.get(PcapDslFile.PCAP_RANK);
         }
 
-        ITmfTimestamp tmfTimestamp = getTimestamp(pcapFile, pcapTrace, packetHeader);
-        ITmfEventField rootEventField = createEventFieldContent(packetMap);
+        List<ITmfEventField> fieldList = new ArrayList<>();
+        fillEventFieldListContent(packetMap, fieldList, 0);
 
+        ITmfEventField[] fieldArray = fieldList.toArray(new ITmfEventField[fieldList.size()]);
+        ITmfEventField rootEventField =  new TmfEventField(ITmfEventField.ROOT_FIELD_ID, null, fieldArray);
+
+        ITmfTimestamp tmfTimestamp = getTimestamp(pcapFile, pcapTrace, packetHeader);
         return new PcapDslEvent(pcapTrace, rank, tmfTimestamp, new TmfEventType("DSL-extracted Pcap Trace", null),
                 rootEventField, packetMap);
     }
 
-    private static ITmfEventField createEventFieldContent(Map<String, Object> packetMap) {
-        List<ITmfEventField> fieldList = new ArrayList<>();
+    private static void fillEventFieldListContent(Map<String, Object> contentMap, List<ITmfEventField> fieldList,
+            int nestingLevel) {
+
         List<ITmfEventField> subfieldList = new ArrayList<>();
+        String subfieldLabel = null;
 
-        Map<String, Object> tmpMap = packetMap;
-        int nestingLevel = 0;
+        for (Map.Entry<String, Object> entry : contentMap.entrySet()) {
+            final String k = entry.getKey();
+            final Object v = entry.getValue();
 
-        while (tmpMap != null) {
-            subfieldList.clear();
-            String subfieldLabel = null;
+            if (k.startsWith("__")) {
+                continue;
+            }
 
-            for (Map.Entry<String, Object> entry : tmpMap.entrySet()) {
-                final String k = entry.getKey();
-                if (k != null && !k.equals(Constants.PACKET_MAP_DATA_KEY) && !k.startsWith("__")) {
-                    subfieldList.add(new TmfEventField(k, entry.getValue(), null));
+            if (!(v instanceof Map)) {
+                subfieldList.add(new TmfEventField(k, v, null));
 
-                    if (k.equals(Constants.PACKET_MAP_PROTOCOL_KEY)) {
-                        subfieldLabel = String.valueOf(entry.getValue());
-                    }
+                if (k.equals(Constants.PACKET_MAP_PROTOCOL_KEY)) {
+                    subfieldLabel = String.valueOf(v);
                 }
-            }
-
-            if (subfieldLabel == null) {
-                subfieldLabel = String.valueOf(nestingLevel);
-            }
-
-            ITmfEventField[] subfieldArray = subfieldList.toArray(new ITmfEventField[subfieldList.size()]);
-            fieldList.add(new PcapDslEventField(subfieldLabel, "", subfieldArray, tmpMap));
-
-            nestingLevel++;
-            Object data = tmpMap.get(Constants.PACKET_MAP_DATA_KEY);
-            if (data instanceof Map<?, ?>) {
-                tmpMap = (Map<String, Object>) data;
             } else {
-                tmpMap = null;
+                fillEventFieldListContent((Map<String, Object>) v, fieldList, ++nestingLevel);
             }
         }
 
-        ITmfEventField[] fieldArray = fieldList.toArray(new ITmfEventField[fieldList.size()]);
-        return new TmfEventField(ITmfEventField.ROOT_FIELD_ID, null, fieldArray);
+        if (subfieldLabel == null) {
+            subfieldLabel = String.valueOf(nestingLevel);
+        }
+
+        ITmfEventField[] subfieldArray = subfieldList.toArray(new ITmfEventField[subfieldList.size()]);
+        fieldList.add(new PcapDslEventField(subfieldLabel, "", subfieldArray, contentMap));
     }
 
     private static ITmfTimestamp getTimestamp(PcapFile pcapFile, PcapTrace pcapTrace, ByteBuffer packetHeader) {
