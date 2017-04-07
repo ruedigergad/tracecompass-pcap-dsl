@@ -63,12 +63,16 @@ public class DslStreamListView extends TmfView {
     public static final String ID = "pcap.dsl.ui.view.stream.list";
 
     private static final String[] COLUMN_NAMES = { Messages.StreamListView_ID, Messages.StreamListView_EndpointA,
-            Messages.StreamListView_EndpointB, Messages.StreamListView_TotalPackets, Messages.StreamListView_TotalBytes,
-            Messages.StreamListView_PacketsAtoB, Messages.StreamListView_BytesAtoB, Messages.StreamListView_PacketsBtoA,
-            Messages.StreamListView_BytesBtoA, Messages.StreamListView_StartTime, Messages.StreamListView_StopTime,
+            Messages.StreamListView_EndpointB, Messages.StreamListView_TotalPackets,
+//            Messages.StreamListView_TotalBytes,
+            Messages.StreamListView_PacketsAtoB,
+//            Messages.StreamListView_BytesAtoB,
+            Messages.StreamListView_PacketsBtoA,
+//            Messages.StreamListView_BytesBtoA,
+            Messages.StreamListView_StartTime, Messages.StreamListView_StopTime,
             Messages.StreamListView_Duration, Messages.StreamListView_BPSAtoB, Messages.StreamListView_BPSBtoA };
 
-    private static final int[] COLUMN_SIZES = { 75, 350, 350, 110, 110, 110, 110, 110, 110, 180, 180, 110, 110, 110 };
+    private static final int[] COLUMN_SIZES = { 75, 350, 350, 110, 110, 110, 110, 110, 110, 180, 180}; //, 110, 110, 110 };
 
     private static final String KEY_PROTOCOL = "$protocol$"; //$NON-NLS-1$
     private static final String KEY_STREAM = "$stream$"; //$NON-NLS-1$
@@ -264,11 +268,11 @@ public class DslStreamListView extends TmfView {
                             item.setText(1, String.valueOf(stream.getAAddress()));
                             item.setText(2, String.valueOf(stream.getBAddress()));
                             item.setText(3, String.valueOf(stream.getNbPackets()));
-                            item.setText(4, String.valueOf(stream.getNbBytes()));
-                            item.setText(5, String.valueOf(stream.getNbPacketsAtoB()));
-                            item.setText(6, String.valueOf(stream.getNbBytesAtoB()));
-                            item.setText(7, String.valueOf(stream.getNbPacketsBtoA()));
-                            item.setText(8, String.valueOf(stream.getNbBytesBtoA()));
+//                            item.setText(4, String.valueOf(stream.getNbBytes()));
+                            item.setText(4, String.valueOf(stream.getNbPacketsAtoB()));
+//                            item.setText(6, String.valueOf(stream.getNbBytesAtoB()));
+                            item.setText(5, String.valueOf(stream.getNbPacketsBtoA()));
+//                            item.setText(8, String.valueOf(stream.getNbBytesBtoA()));
                             item.setText(9, String.valueOf(stream.getStartTime()));
                             item.setText(10, String.valueOf(stream.getStopTime()));
                             item.setText(11, String.format("%.3f", stream.getDuration())); // $NON-NLS-1$
