@@ -37,6 +37,7 @@ public class PcapDslFile extends PcapFile {
             + "                            0x0800 \"IPv4\"\n"
             + "                            0x0806 \"ARP\"\n"
             + "                            0x86DD \"IPv6\")]\n"
+            + "                [len (int16 16)]\n"
             + "                [src (ipv4-addr-str 26)]\n"
             + "                [dst (ipv4-addr-str 30)]\n"
             + "                [data [[protocol (condp = (int8 23)\n"
