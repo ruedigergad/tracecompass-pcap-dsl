@@ -31,12 +31,15 @@ public class DslPacketMapStreamBuilder {
             System.out.println(protocol + " " + nestingLevel + " "
                     + String.valueOf(nestedMap.get(Constants.PACKET_MAP_SUMMARY_KEY)));
             
-            String aAddress = Helper.getMergedString(packetMap, Constants.PACKET_MAP_DST_KEY, nestingLevel);
+            String aAddress = Helper.getMergedString(packetMap, Constants.PACKET_MAP_SRC_KEY, nestingLevel);
             String bAddress = Helper.getMergedString(packetMap, Constants.PACKET_MAP_DST_KEY, nestingLevel);
             String streamKey = aAddress + bAddress;
+            String reverseStreamKey = bAddress + aAddress;
             
             if (streams.containsKey(streamKey)) {
                 streams.get(streamKey).add(packetMap, nestingLevel);
+            } else if (streams.containsKey(reverseStreamKey)) {
+                streams.get(reverseStreamKey).add(packetMap, nestingLevel);
             } else {
                 DslPacketMapStream stream = new DslPacketMapStream(protocol, id, streamKey);
                 id++;
