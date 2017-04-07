@@ -93,11 +93,13 @@ public class Helper {
         Map<String, Object> tmpMap = packetMap;
         int currentNestingLevel = 0;
 
-        while (tmpMap != null && currentNestingLevel <= nestingLevel) {
-            if (tmpMap.containsKey(key) && tmpMap.get(Constants.PACKET_MAP_DATA_KEY) instanceof Map<?, ?>) {
+        while (tmpMap != null) {
+            if (tmpMap.containsKey(key)) {
                 sb.append(tmpMap.get(key));
+            }
+
+            if (tmpMap.get(Constants.PACKET_MAP_DATA_KEY) instanceof Map<?, ?> && currentNestingLevel < nestingLevel) {
                 sb.append(Constants.SEPARATOR);
-                
                 tmpMap = (Map<String, Object>) tmpMap.get(Constants.PACKET_MAP_DATA_KEY);
                 currentNestingLevel++;
             } else {

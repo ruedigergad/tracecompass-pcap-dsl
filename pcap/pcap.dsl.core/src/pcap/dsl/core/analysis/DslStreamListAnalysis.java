@@ -113,13 +113,18 @@ public class DslStreamListAnalysis extends TmfAbstractAnalysisModule {
             @Override
             public void handleData(ITmfEvent data) {
                 // Called for each event
-                super.handleData(data);
-                if (!(data instanceof PcapDslEvent)) {
-                    return;
-                }
-                PcapDslEvent event = (PcapDslEvent) data;
-                for (Map.Entry<String, DslPacketMapStreamBuilder> entry : fBuilders.entrySet()) {
-                    entry.getValue().addEventToStream(event);
+                try {
+                    super.handleData(data);
+                    if (!(data instanceof PcapDslEvent)) {
+                        return;
+                    }
+                    PcapDslEvent event = (PcapDslEvent) data;
+                    for (Map.Entry<String, DslPacketMapStreamBuilder> entry : fBuilders.entrySet()) {
+                        entry.getValue().addEventToStream(event);
+                    }
+                } catch (Exception e) {
+                    System.out.println("DslStreamListAnalysis: Error processing events from trace...");
+                    e.printStackTrace();
                 }
 
             }
