@@ -66,6 +66,8 @@ public class PcapDslFile extends PcapFile {
             + "                                       :default r#)))\n"
             + "                                #{}\n"
             + "                                [\"FIN\" \"SYN\" \"RST\" \"PSH\" \"ACK\" \"URG\" \"ECE\" \"CWR\"])]\n"
+            + "                       [data [[protocol (str \"STOMP\")]\n"
+            + "                              [content (ba-to-str (+ off 52) (- __1_len 52))]]]\n"
             + "                       [summary (str __2_protocol __2_flags \": \" __2_src \" -> \" __2_dst)]]]\n"
             + "                [summary (str __1_protocol \": \" __1_src \" -> \" __1_dst)]]]\n"
             + "         [summary (str protocol \": \" src \" -> \" dst)]]}";
