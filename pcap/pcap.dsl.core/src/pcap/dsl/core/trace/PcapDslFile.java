@@ -57,7 +57,7 @@ public class PcapDslFile extends PcapFile {
             + "                                       (cond\n"
             + "                                         (>\n"
             + "                                           (bit-and\n"
-            + "                                             (dsbdp.byte-array-conversion/int8 ~'input 47)\n"
+            + "                                             ~'__2_flags-value\n"
             + "                                             (bit-shift-left 1 k#))\n"
             + "                                           0)\n"
             + "                                              (conj r# v#)\n"
