@@ -55,7 +55,7 @@
       <view
             class="pcap.dsl.ui.view.DslEditorView"
             id="pcap.dsl.core.DslEditorView"
-            name="DSL Editor View"
+            name="DSL Editor"
             restorable="true">
       </view>
    </extension>
