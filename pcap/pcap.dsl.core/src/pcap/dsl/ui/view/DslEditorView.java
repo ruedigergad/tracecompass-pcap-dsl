@@ -5,10 +5,13 @@ import java.util.Map;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextListener;
+import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.TextEvent;
+import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.CompositeRuler;
 import org.eclipse.jface.text.source.LineNumberRulerColumn;
 import org.eclipse.jface.text.source.OverviewRuler;
+import org.eclipse.jface.text.source.projection.ProjectionAnnotation;
 import org.eclipse.jface.text.source.projection.ProjectionAnnotationModel;
 import org.eclipse.jface.text.source.projection.ProjectionSupport;
 import org.eclipse.jface.text.source.projection.ProjectionViewer;
@@ -59,12 +62,22 @@ public class DslEditorView extends TmfView {
                 new OverviewRuler(null, RULER_WIDTH, null), true, SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL);
         this.dslEditorViewer.getControl().setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
+        ProjectionAnnotationModel pam = new ProjectionAnnotationModel();
+        dslEditorRuler.setModel(pam);
+        
+        this.dslEditorDocument = new Document();
+        this.dslEditorDocument.set(Helper.getDslExpression());
+
+        pam.connect(this.dslEditorDocument);
+        pam.addAnnotation(new ProjectionAnnotation(), new Position(0, 23));
+        pam.addAnnotation(new ProjectionAnnotation(), new Position(20, 100));
+        pam.addAnnotation(new ProjectionAnnotation(), new Position(120, 400));
+        
         ProjectionSupport dslEditorProjectionSupport = new ProjectionSupport(this.dslEditorViewer,
                 new DefaultMarkerAnnotationAccess(), EditorsPlugin.getDefault().getSharedTextColors());
 
         dslEditorProjectionSupport.install();
-        this.dslEditorViewer.doOperation(ProjectionViewer.TOGGLE);
-        ProjectionAnnotationModel pam = this.dslEditorViewer.getProjectionAnnotationModel();
+        this.dslEditorViewer.doOperation(ProjectionViewer.TOGGLE);        
 
         this.dslEditorViewer.addTextListener(new ITextListener() {
 
@@ -89,11 +102,11 @@ public class DslEditorView extends TmfView {
                 }
             }
         });
+        
 
-        this.dslEditorDocument = new Document();
-        this.dslEditorDocument.set(Helper.getDslExpression());
-
-        this.dslEditorViewer.setDocument(this.dslEditorDocument);
+        this.dslEditorViewer.showAnnotations(true);
+        this.dslEditorViewer.setDocument(this.dslEditorDocument, pam);
+        
 
         this.previewOutput = new StyledText(this.mainSash, SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL);
     }
@@ -126,12 +139,16 @@ public class DslEditorView extends TmfView {
 
     private void updatePreview() {
         if (this.baData == null) {
-            this.previewOutput.setText("Preview data is invalid.");
+            if (this.previewOutput != null) {
+                this.previewOutput.setText("Preview data is invalid.");
+            }
             return;
         }
 
         if (this.dslFn == null) {
-            this.previewOutput.setText("DSL function is invalid.");
+            if (this.previewOutput != null) {
+                this.previewOutput.setText("DSL function is invalid.");
+            }
             return;
         }
 
