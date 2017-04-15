@@ -5,8 +5,11 @@ import java.util.Map;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.custom.VerifyKeyListener;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.VerifyEvent;
+import org.eclipse.swt.events.VerifyListener;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.tracecompass.tmf.core.event.ITmfEvent;
 import org.eclipse.tracecompass.tmf.core.signal.TmfEventSelectedSignal;
@@ -31,6 +34,7 @@ public class DslEditorView extends TmfView {
     private StyledText dslEditorInput;
     private StyledText previewOutput;
     private IFn dslFn;
+    private byte[] baData;
 
     @Override
     public void createPartControl(Composite parent) {
@@ -50,6 +54,7 @@ public class DslEditorView extends TmfView {
                 try {
                     dslFn = DslHelper.generateProcessingFn(dslExpression);
                     System.out.println("Successfully generated processing function.");
+                    updatePreview();
                 } catch (Exception e) {
                     System.out.println("Caught exception while generating processing function from DSL.");
                     e.printStackTrace();
@@ -83,17 +88,23 @@ public class DslEditorView extends TmfView {
             return;
         }
 
-        byte[] baData = (byte[]) packetMap.get(PcapDslFile.PCAP_RAW_DATA);
-        updatePreview(baData);
+        this.baData = (byte[]) packetMap.get(PcapDslFile.PCAP_RAW_DATA);
+        updatePreview();
     }
-    
-    private void updatePreview(byte[] baData) {
-        if (baData == null || dslFn == null) {
+
+    private void updatePreview() {
+        if (this.baData == null) {
+            this.previewOutput.setText("Preview data is invalid.");
             return;
         }
-        
-        Object dslOut = dslFn.invoke(baData);
-        //System.out.println("DSL Output: " + String.valueOf(dslOut));
+
+        if (this.dslFn == null) {
+            this.previewOutput.setText("DSL function is invalid.");
+            return;
+        }
+
+        Object dslOut = dslFn.invoke(this.baData);
+        // System.out.println("DSL Output: " + String.valueOf(dslOut));
 
         if (dslOut instanceof Map) {
             Map<String, Object> packetDataMap = (Map<String, Object>) dslOut;
