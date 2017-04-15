@@ -2,14 +2,15 @@ package pcap.dsl.ui.view;
 
 import java.util.Map;
 
+import org.eclipse.jface.text.Document;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.ITextListener;
+import org.eclipse.jface.text.TextEvent;
+import org.eclipse.jface.text.source.OverviewRuler;
+import org.eclipse.jface.text.source.SourceViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.custom.StyledText;
-import org.eclipse.swt.custom.VerifyKeyListener;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.events.VerifyEvent;
-import org.eclipse.swt.events.VerifyListener;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.tracecompass.tmf.core.event.ITmfEvent;
 import org.eclipse.tracecompass.tmf.core.signal.TmfEventSelectedSignal;
@@ -31,7 +32,9 @@ public class DslEditorView extends TmfView {
     }
 
     private SashForm mainSash;
-    private StyledText dslEditorInput;
+    // private StyledText dslEditorInput;
+    private SourceViewer dslEditorInput;
+    private IDocument dslEditorDocument;
     private StyledText previewOutput;
     private IFn dslFn;
     private byte[] baData;
@@ -40,12 +43,13 @@ public class DslEditorView extends TmfView {
     public void createPartControl(Composite parent) {
         this.mainSash = new SashForm(parent, SWT.HORIZONTAL);
 
-        this.dslEditorInput = new StyledText(this.mainSash, SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL);
-        this.dslEditorInput.addModifyListener(new ModifyListener() {
+        this.dslEditorInput = new SourceViewer(this.mainSash, new OverviewRuler(null, 12, null),
+                SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL);
+        this.dslEditorInput.addTextListener(new ITextListener() {
 
             @Override
-            public void modifyText(ModifyEvent event) {
-                String dslExpression = dslEditorInput.getText();
+            public void textChanged(TextEvent event) {
+                String dslExpression = dslEditorDocument.get();
 
                 if (dslExpression == null || dslExpression.isEmpty()) {
                     return;
@@ -64,7 +68,11 @@ public class DslEditorView extends TmfView {
                 }
             }
         });
-        this.dslEditorInput.setText(Helper.getDslExpression());
+
+        this.dslEditorDocument = new Document();
+        this.dslEditorDocument.set(Helper.getDslExpression());
+
+        this.dslEditorInput.setDocument(this.dslEditorDocument);
 
         this.previewOutput = new StyledText(this.mainSash, SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL);
     }
