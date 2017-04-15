@@ -97,7 +97,8 @@ public class DslEditorView extends TmfView {
 
         if (dslOut instanceof Map) {
             Map<String, Object> packetDataMap = (Map<String, Object>) dslOut;
-            this.previewOutput.setText(String.valueOf(packetDataMap));
+            String outString = DslHelper.prettyPrint(packetDataMap);
+            this.previewOutput.setText(outString.replaceAll(", ", "\n"));
         }
     }
 }
