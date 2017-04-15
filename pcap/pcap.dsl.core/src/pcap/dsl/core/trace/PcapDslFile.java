@@ -20,6 +20,7 @@ public class PcapDslFile extends PcapFile {
 
     public static final String PCAP_RANK = "__rank";
     public static final String PCAP_HEADER = "__header";
+    public static final String PCAP_RAW_DATA = "__raw_data";
 
     private IFn dslFn = null;
 
@@ -87,6 +88,7 @@ public class PcapDslFile extends PcapFile {
                     pcapPacketDataMap = (Map<String, Object>) dslOut;
                     pcapPacketDataMap.put(PCAP_HEADER, pcapPacketHeader);
                     pcapPacketDataMap.put(PCAP_RANK, fCurrentRank);
+                    pcapPacketDataMap.put(PCAP_RAW_DATA, baData);
                 }
             }
         }
