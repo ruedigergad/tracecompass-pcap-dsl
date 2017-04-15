@@ -9,17 +9,20 @@ import org.eclipse.jface.text.TextEvent;
 import org.eclipse.jface.text.source.CompositeRuler;
 import org.eclipse.jface.text.source.LineNumberRulerColumn;
 import org.eclipse.jface.text.source.OverviewRuler;
-import org.eclipse.jface.text.source.SourceViewer;
-import org.eclipse.jface.text.source.SourceViewerConfiguration;
+import org.eclipse.jface.text.source.projection.ProjectionAnnotationModel;
+import org.eclipse.jface.text.source.projection.ProjectionSupport;
 import org.eclipse.jface.text.source.projection.ProjectionViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.tracecompass.tmf.core.event.ITmfEvent;
 import org.eclipse.tracecompass.tmf.core.signal.TmfEventSelectedSignal;
 import org.eclipse.tracecompass.tmf.core.signal.TmfSignalHandler;
 import org.eclipse.tracecompass.tmf.ui.views.TmfView;
+import org.eclipse.ui.internal.editors.text.EditorsPlugin;
+import org.eclipse.ui.texteditor.DefaultMarkerAnnotationAccess;
 
 import clojure.lang.IFn;
 import dsbdp.DslHelper;
@@ -30,6 +33,8 @@ import pcap.dsl.core.util.Helper;
 public class DslEditorView extends TmfView {
 
     public static final String ID = "pcap.dsl.core.DslEditorView";
+
+    private static final int RULER_WIDTH = 12;
 
     public DslEditorView() {
         super(ID);
@@ -47,12 +52,20 @@ public class DslEditorView extends TmfView {
     public void createPartControl(Composite parent) {
         this.mainSash = new SashForm(parent, SWT.HORIZONTAL);
 
-        CompositeRuler dslEditorRuler = new CompositeRuler(12);
+        CompositeRuler dslEditorRuler = new CompositeRuler(RULER_WIDTH);
         dslEditorRuler.addDecorator(0, new LineNumberRulerColumn());
 
-        this.dslEditorViewer = new ProjectionViewer(this.mainSash, dslEditorRuler, new OverviewRuler(null, 12, null),
-                true, SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL | SWT.BORDER);
-        this.dslEditorViewer.configure(new SourceViewerConfiguration());
+        this.dslEditorViewer = new ProjectionViewer(this.mainSash, dslEditorRuler,
+                new OverviewRuler(null, RULER_WIDTH, null), true, SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL);
+        this.dslEditorViewer.getControl().setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+
+        ProjectionSupport dslEditorProjectionSupport = new ProjectionSupport(this.dslEditorViewer,
+                new DefaultMarkerAnnotationAccess(), EditorsPlugin.getDefault().getSharedTextColors());
+
+        dslEditorProjectionSupport.install();
+        this.dslEditorViewer.doOperation(ProjectionViewer.TOGGLE);
+        ProjectionAnnotationModel pam = this.dslEditorViewer.getProjectionAnnotationModel();
+
         this.dslEditorViewer.addTextListener(new ITextListener() {
 
             @Override
