@@ -11,6 +11,7 @@ import org.eclipse.jface.text.source.LineNumberRulerColumn;
 import org.eclipse.jface.text.source.OverviewRuler;
 import org.eclipse.jface.text.source.SourceViewer;
 import org.eclipse.jface.text.source.SourceViewerConfiguration;
+import org.eclipse.jface.text.source.projection.ProjectionViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.custom.StyledText;
@@ -35,24 +36,22 @@ public class DslEditorView extends TmfView {
     }
 
     private SashForm mainSash;
-    // private StyledText dslEditorInput;
-    private SourceViewer dslEditorViewer;
+    private ProjectionViewer dslEditorViewer;
     private IDocument dslEditorDocument;
     private StyledText previewOutput;
+
     private IFn dslFn;
     private byte[] baData;
-    private CompositeRuler dslEditorRuler;
 
     @Override
     public void createPartControl(Composite parent) {
         this.mainSash = new SashForm(parent, SWT.HORIZONTAL);
 
-        this.dslEditorRuler = new CompositeRuler(12);
-        this.dslEditorRuler.addDecorator(0, new LineNumberRulerColumn());
+        CompositeRuler dslEditorRuler = new CompositeRuler(12);
+        dslEditorRuler.addDecorator(0, new LineNumberRulerColumn());
 
-        this.dslEditorViewer = new SourceViewer(this.mainSash, dslEditorRuler,
-                new OverviewRuler(null, 12, null), true,
-                SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL | SWT.BORDER);
+        this.dslEditorViewer = new ProjectionViewer(this.mainSash, dslEditorRuler, new OverviewRuler(null, 12, null),
+                true, SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL | SWT.BORDER);
         this.dslEditorViewer.configure(new SourceViewerConfiguration());
         this.dslEditorViewer.addTextListener(new ITextListener() {
 
