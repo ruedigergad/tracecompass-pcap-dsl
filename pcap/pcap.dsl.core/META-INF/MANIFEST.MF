@@ -18,7 +18,8 @@ Require-Bundle: org.eclipse.core.runtime,
  com.google.guava,
  org.eclipse.equinox.event,
  org.eclipse.ui.ide,
- org.eclipse.jface.text
+ org.eclipse.jface.text,
+ org.eclipse.ui.editors
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
 Import-Package: com.google.common.collect

@@ -6,8 +6,11 @@ import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextListener;
 import org.eclipse.jface.text.TextEvent;
+import org.eclipse.jface.text.source.CompositeRuler;
+import org.eclipse.jface.text.source.LineNumberRulerColumn;
 import org.eclipse.jface.text.source.OverviewRuler;
 import org.eclipse.jface.text.source.SourceViewer;
+import org.eclipse.jface.text.source.SourceViewerConfiguration;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.custom.StyledText;
@@ -33,19 +36,25 @@ public class DslEditorView extends TmfView {
 
     private SashForm mainSash;
     // private StyledText dslEditorInput;
-    private SourceViewer dslEditorInput;
+    private SourceViewer dslEditorViewer;
     private IDocument dslEditorDocument;
     private StyledText previewOutput;
     private IFn dslFn;
     private byte[] baData;
+    private CompositeRuler dslEditorRuler;
 
     @Override
     public void createPartControl(Composite parent) {
         this.mainSash = new SashForm(parent, SWT.HORIZONTAL);
 
-        this.dslEditorInput = new SourceViewer(this.mainSash, new OverviewRuler(null, 12, null),
-                SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL);
-        this.dslEditorInput.addTextListener(new ITextListener() {
+        this.dslEditorRuler = new CompositeRuler(12);
+        this.dslEditorRuler.addDecorator(0, new LineNumberRulerColumn());
+
+        this.dslEditorViewer = new SourceViewer(this.mainSash, dslEditorRuler,
+                new OverviewRuler(null, 12, null), true,
+                SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL | SWT.BORDER);
+        this.dslEditorViewer.configure(new SourceViewerConfiguration());
+        this.dslEditorViewer.addTextListener(new ITextListener() {
 
             @Override
             public void textChanged(TextEvent event) {
@@ -72,7 +81,7 @@ public class DslEditorView extends TmfView {
         this.dslEditorDocument = new Document();
         this.dslEditorDocument.set(Helper.getDslExpression());
 
-        this.dslEditorInput.setDocument(this.dslEditorDocument);
+        this.dslEditorViewer.setDocument(this.dslEditorDocument);
 
         this.previewOutput = new StyledText(this.mainSash, SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL);
     }
