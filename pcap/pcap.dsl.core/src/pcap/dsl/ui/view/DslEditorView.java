@@ -56,6 +56,9 @@ public class DslEditorView extends TmfView {
                     System.out.println("Successfully generated processing function.");
                     updatePreview();
                 } catch (Exception e) {
+                    if (previewOutput != null) {
+                        previewOutput.setText("Failed to generated processing funtion:\n" + e.getMessage());
+                    }
                     System.out.println("Caught exception while generating processing function from DSL.");
                     e.printStackTrace();
                 }
