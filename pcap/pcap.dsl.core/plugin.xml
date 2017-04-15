@@ -52,6 +52,12 @@
             name="DSL Stream List"
             restorable="true">
       </view>
+      <view
+            class="pcap.dsl.ui.view.DslEditorView"
+            id="pcap.dsl.core.DslEditorView"
+            name="DSL Editor View"
+            restorable="true">
+      </view>
    </extension>
 
 </plugin>
