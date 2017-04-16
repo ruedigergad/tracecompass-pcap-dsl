@@ -16,7 +16,6 @@ import org.eclipse.jface.text.source.projection.ProjectionSupport;
 import org.eclipse.jface.text.source.projection.ProjectionViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
-import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.tracecompass.tmf.core.event.ITmfEvent;
 import org.eclipse.tracecompass.tmf.core.signal.TmfEventSelectedSignal;
@@ -42,9 +41,12 @@ public class DslEditorView extends TmfView {
     }
 
     private SashForm mainSash;
+
     private ProjectionViewer dslEditorViewer;
     private IDocument dslEditorDocument;
-    private StyledText previewOutput;
+
+    private ProjectionViewer outputViewer;
+    private IDocument outputDocument;
 
     private IFn dslFn;
     private byte[] baData;
@@ -74,8 +76,8 @@ public class DslEditorView extends TmfView {
                     System.out.println("Successfully generated processing function.");
                     updatePreview();
                 } catch (Exception e) {
-                    if (previewOutput != null) {
-                        previewOutput.setText("Failed to generated processing funtion:\n" + e.getMessage());
+                    if (outputDocument != null) {
+                        outputDocument.set("Failed to generated processing funtion:\n" + e.getMessage());
                     }
                     System.out.println("Caught exception while generating processing function from DSL.");
                     e.printStackTrace();
@@ -83,13 +85,12 @@ public class DslEditorView extends TmfView {
             }
         });
 
-        IAnnotationAccess markerAnnotationAccess = new DefaultMarkerAnnotationAccess();
+        IAnnotationAccess editorMarkerAnnotationAccess = new DefaultMarkerAnnotationAccess();
         ProjectionSupport dslEditorProjectionSupport = new ProjectionSupport(this.dslEditorViewer,
-                markerAnnotationAccess, EditorsPlugin.getDefault().getSharedTextColors());
+                editorMarkerAnnotationAccess, EditorsPlugin.getDefault().getSharedTextColors());
         dslEditorProjectionSupport.install();
 
         this.dslEditorViewer.doOperation(ProjectionViewer.TOGGLE);
-
 
         this.dslEditorDocument = new Document();
         this.dslEditorDocument.set(Helper.getDslExpression());
@@ -104,7 +105,31 @@ public class DslEditorView extends TmfView {
         pam.addAnnotation(new ProjectionAnnotation(), new Position(0, 44));
         pam.addAnnotation(new ProjectionAnnotation(), new Position(90, 150));
 
-        this.previewOutput = new StyledText(this.mainSash, SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL);
+        CompositeRuler outputVerticalRuler = new CompositeRuler(RULER_WIDTH);
+        outputVerticalRuler.addDecorator(0, new LineNumberRulerColumn());
+
+        this.outputViewer = new ProjectionViewer(this.mainSash, outputVerticalRuler, null, false,
+                SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL);
+
+        IAnnotationAccess outputMarkerAnnotationAccess = new DefaultMarkerAnnotationAccess();
+        ProjectionSupport outputProjectionSupport = new ProjectionSupport(this.outputViewer,
+                outputMarkerAnnotationAccess, EditorsPlugin.getDefault().getSharedTextColors());
+        outputProjectionSupport.install();
+
+        this.outputViewer.doOperation(ProjectionViewer.TOGGLE);
+
+        this.outputDocument = new Document();
+        ProjectionAnnotationModel pam2 = new ProjectionAnnotationModel();
+
+        this.outputViewer.enableProjection();
+        this.outputViewer.setDocument(this.outputDocument, pam2);
+        this.outputViewer.enableProjection();
+        this.outputViewer.setDocument(this.outputDocument, pam2);
+
+        pam2 = this.outputViewer.getProjectionAnnotationModel();
+        pam2.addAnnotation(new ProjectionAnnotation(), new Position(0, 44));
+        pam2.addAnnotation(new ProjectionAnnotation(), new Position(90, 150));
+
     }
 
     @Override
@@ -135,15 +160,15 @@ public class DslEditorView extends TmfView {
 
     private void updatePreview() {
         if (this.baData == null) {
-            if (this.previewOutput != null) {
-                this.previewOutput.setText("Preview data is invalid.");
+            if (this.outputDocument != null) {
+                this.outputDocument.set("Preview data is invalid.");
             }
             return;
         }
 
         if (this.dslFn == null) {
-            if (this.previewOutput != null) {
-                this.previewOutput.setText("DSL function is invalid.");
+            if (this.outputDocument != null) {
+                this.outputDocument.set("DSL function is invalid.");
             }
             return;
         }
@@ -154,7 +179,7 @@ public class DslEditorView extends TmfView {
         if (dslOut instanceof Map) {
             Map<String, Object> packetDataMap = (Map<String, Object>) dslOut;
             String outString = DslHelper.prettyPrint(packetDataMap);
-            this.previewOutput.setText(outString.replaceAll(", ", "\n"));
+            this.outputDocument.set(outString.replaceAll(", ", "\n"));
         }
     }
 }
