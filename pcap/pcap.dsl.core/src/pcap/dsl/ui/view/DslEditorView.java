@@ -53,27 +53,9 @@ public class DslEditorView extends TmfView {
     public void createPartControl(Composite parent) {
         this.mainSash = new SashForm(parent, SWT.HORIZONTAL);
 
-        this.dslEditorDocument = new Document();
-        this.dslEditorDocument.set(Helper.getDslExpression());
-
-        IAnnotationAccess markerAnnotationAccess = new DefaultMarkerAnnotationAccess();
-
-        ProjectionAnnotationModel pam = new ProjectionAnnotationModel();
-
-        // IVerticalRuler dslEditorVerticalRuler = new
-        // VerticalRuler(RULER_WIDTH);
-        // IVerticalRuler dslEditorVerticalRuler = new
-        // VerticalRuler(RULER_WIDTH, markerAnnotationAccess);
         CompositeRuler dslEditorVerticalRuler = new CompositeRuler(RULER_WIDTH);
         dslEditorVerticalRuler.addDecorator(0, new LineNumberRulerColumn());
 
-        // dslEditorVerticalRuler.addDecorator(1, new ProjectionRulerColumn());
-
-        // dslEditorVerticalRuler.setModel(pam);
-
-        // IOverviewRuler overviewRuler = new
-        // OverviewRuler(markerAnnotationAccess, RULER_WIDTH,
-        // EditorsPlugin.getDefault().getSharedTextColors());
         this.dslEditorViewer = new ProjectionViewer(this.mainSash, dslEditorVerticalRuler, null, false,
                 SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL);
 
@@ -101,34 +83,26 @@ public class DslEditorView extends TmfView {
             }
         });
 
+        IAnnotationAccess markerAnnotationAccess = new DefaultMarkerAnnotationAccess();
         ProjectionSupport dslEditorProjectionSupport = new ProjectionSupport(this.dslEditorViewer,
                 markerAnnotationAccess, EditorsPlugin.getDefault().getSharedTextColors());
         dslEditorProjectionSupport.install();
 
         this.dslEditorViewer.doOperation(ProjectionViewer.TOGGLE);
 
-        // this.dslEditorViewer.showAnnotations(true);
-        this.dslEditorViewer.enableProjection();
-        this.dslEditorViewer.setDocument(this.dslEditorDocument, pam);
+
+        this.dslEditorDocument = new Document();
+        this.dslEditorDocument.set(Helper.getDslExpression());
+        ProjectionAnnotationModel pam = new ProjectionAnnotationModel();
 
         this.dslEditorViewer.enableProjection();
         this.dslEditorViewer.setDocument(this.dslEditorDocument, pam);
-
-        // this.dslEditorViewer.getControl().setLayoutData(new
-        // GridData(SWT.FILL, SWT.FILL, true, true));
-
-        // pam.connect(this.dslEditorDocument);
+        this.dslEditorViewer.enableProjection();
+        this.dslEditorViewer.setDocument(this.dslEditorDocument, pam);
 
         pam = this.dslEditorViewer.getProjectionAnnotationModel();
-        pam.addAnnotation(new ProjectionAnnotation(), new Position(0, 43));
+        pam.addAnnotation(new ProjectionAnnotation(), new Position(0, 44));
         pam.addAnnotation(new ProjectionAnnotation(), new Position(90, 150));
-        // pam.addAnnotation(new ProjectionAnnotation(), new Position(120,
-        // 400));
-
-        // SourceViewerDecorationSupport sourceViewerDecorationSupport = new
-        // SourceViewerDecorationSupport(
-        // this.dslEditorViewer, null, markerAnnotationAccess,
-        // EditorsPlugin.getDefault().getSharedTextColors());
 
         this.previewOutput = new StyledText(this.mainSash, SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL);
     }
