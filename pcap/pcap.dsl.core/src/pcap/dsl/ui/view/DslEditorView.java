@@ -267,7 +267,7 @@ public class DslEditorView extends TmfView {
 
             System.out.println(
                     prevStartPosition.getOffset() + " - " + (currentEndOffset - prevStartPosition.getOffset()));
-            prevStartPosition.setLength(currentEndOffset - prevStartPosition.getOffset());
+            prevStartPosition.setLength(currentEndOffset - prevStartPosition.getOffset() + 1);
 
             endIdx++;
             if (foldEndIndices.size() < endIdx) {
