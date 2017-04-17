@@ -1,5 +1,9 @@
 package pcap.dsl.ui.view;
 
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -9,6 +13,7 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.collections4.MapUtils;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
@@ -197,8 +202,14 @@ public class DslEditorView extends TmfView {
 
         if (dslOut instanceof Map) {
             Map<String, Object> packetDataMap = (Map<String, Object>) dslOut;
-            String outString = DslHelper.prettyPrint(packetDataMap);
-            this.outputDocument.set(outString.replaceAll(", ", "\n"));
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            MapUtils.verbosePrint(new PrintStream(baos), null, packetDataMap);
+            try {
+                this.outputDocument.set(baos.toString(StandardCharsets.UTF_8.name()));
+            } catch (UnsupportedEncodingException e) {
+                this.outputDocument.set("Failed to format processing function output:\n" + e.getMessage());
+                e.printStackTrace();
+            }
         }
     }
 
