@@ -54,7 +54,7 @@ public class DslEditorView extends TmfView {
     private ProjectionViewer dslEditorViewer;
     private IDocument dslEditorDocument;
     private Pattern dslEditorFoldStartPattern = Pattern.compile("(?s)\\[\\s*\\[");
-    private Pattern dslEditorFoldEndPattern = Pattern.compile("(?s)\\]\\s*\\]");
+    private Pattern dslEditorFoldEndPattern = Pattern.compile("(?s)\\]\\s*\\][^\n]*\n");
     private ProjectionAnnotation[] dslEditorOldAnnotations = new ProjectionAnnotation[] {};
 
     private ProjectionViewer outputViewer;
@@ -267,7 +267,7 @@ public class DslEditorView extends TmfView {
 
             System.out.println(
                     prevStartPosition.getOffset() + " - " + (currentEndOffset - prevStartPosition.getOffset()));
-            prevStartPosition.setLength(currentEndOffset - prevStartPosition.getOffset() + 1);
+            prevStartPosition.setLength(currentEndOffset - prevStartPosition.getOffset());
 
             endIdx++;
             if (foldEndIndices.size() < endIdx) {
