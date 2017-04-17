@@ -231,13 +231,6 @@ public class DslEditorView extends TmfView {
             foldEndIndices.add(foldEndMatcher.end());
         }
 
-        System.out.println("Fold Start: " + String.valueOf(foldStartPositions));
-        System.out.println("Fold End: " + String.valueOf(foldEndIndices));
-
-        // foldStartPositions.get(0)
-        // .setLength(foldEndIndices.get(foldEndIndices.size() - 1) -
-        // foldStartPositions.get(0).getOffset());
-
         Set<Integer> matchedStartIdx = new HashSet<>();
         matchedStartIdx.add(0);
         Set<Integer> matchedEndIdx = new HashSet<>();
@@ -250,7 +243,6 @@ public class DslEditorView extends TmfView {
         int currentEndOffset = foldEndIndices.get(endIdx);
         while (startIdx >= 1 && endIdx >= 0 && startIdx < foldStartPositions.size() + 1
                 && endIdx < foldEndIndices.size() - 1) {
-            System.out.println(currentStartOffset + " < " + currentEndOffset);
 
             if (currentStartOffset < currentEndOffset && maxStartIdx < foldStartPositions.size()) {
                 do {
@@ -276,8 +268,6 @@ public class DslEditorView extends TmfView {
 
             maxStartIdx = Math.max(maxStartIdx, startIdx);
 
-            System.out.println(
-                    prevStartPosition.getOffset() + " - " + (currentEndOffset - prevStartPosition.getOffset()));
             prevStartPosition.setLength(currentEndOffset - prevStartPosition.getOffset());
 
             endIdx++;
@@ -292,8 +282,6 @@ public class DslEditorView extends TmfView {
                 currentStartOffset = foldStartPositions.get(startIdx).getOffset();
             }
         }
-
-        System.out.println("FOOOOOOOOOOOOOOOOO" + String.valueOf(foldStartPositions));
 
         ProjectionAnnotation[] currentAnnotations = new ProjectionAnnotation[foldStartPositions.size()];
         Map<ProjectionAnnotation, Position> newAnnotations = new HashMap<>();
