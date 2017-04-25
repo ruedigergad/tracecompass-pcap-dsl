@@ -1,5 +1,20 @@
 package pcap.dsl.core.config;
 
+/*
+ * Copyright 2017, Ruediger Gad
+ * 
+ * This software is released under the terms of the Eclipse Public License 
+ * (EPL) 1.0. You can find a copy of the EPL at: 
+ * http://opensource.org/licenses/eclipse-1.0.php
+ * 
+ */
+
+/**
+ * Global constants.
+ * 
+ * @author &lt;r.c.g@gmx.de&gt;
+ *
+ */
 public class Constants {
 
     public static final String DSL_FILE_CONFIG_KEY = "pcap.dsl.core.dsl_expression";
