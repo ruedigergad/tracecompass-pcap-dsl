@@ -1,5 +1,14 @@
 package pcap.dsl.core.util;
 
+/*
+ * Copyright 2017, Ruediger Gad
+ * 
+ * This software is released under the terms of the Eclipse Public License 
+ * (EPL) 1.0. You can find a copy of the EPL at: 
+ * http://opensource.org/licenses/eclipse-1.0.php
+ * 
+ */
+
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
@@ -17,6 +26,14 @@ import pcap.dsl.core.config.Constants;
 import pcap.dsl.core.event.PcapDslEvent;
 import pcap.dsl.core.trace.PcapDslTrace;
 
+/**
+ * 
+ * Helper class for processing map-based packet header data as returned by the
+ * dsbdp DSL.
+ * 
+ * @author &lt;r.c.g@gmx.de&gt;
+ *
+ */
 public class Helper {
 
     //@formatter:off
@@ -167,7 +184,7 @@ public class Helper {
 //          + "                [summary (str __1_protocol \": \" __1_src \" -> \" __1_dst)]]]\n"
 //          + "         [summary (str protocol \": \" src \" -> \" dst)]]}";
   //@formatter:on
-    
+
     private Helper() {
         // No instances allowed of Helper class.
     }
@@ -188,21 +205,22 @@ public class Helper {
         return tmpMap;
     }
 
+    /**
+     * Determine what protocols are contained in the given trace and get their
+     * nesting levels. Returns a map of protocol name and nesting level.
+     * 
+     * @param trace
+     * @return
+     */
     public static Map<String, Integer> getProtocolMap(PcapDslTrace trace) {
         Map<String, Integer> protocolMap = new HashMap<>();
 
         if (trace != null) {
-            // ITmfEventRequest request = fRequest;
-            // if ((request != null) && (!request.isCompleted())) {
-            // request.cancel();
-            // }
-
             ITmfEventRequest request = new TmfEventRequest(PcapDslEvent.class, TmfTimeRange.ETERNITY, 0L,
                     ITmfEventRequest.ALL_DATA, ITmfEventRequest.ExecutionType.BACKGROUND) {
 
                 @Override
                 public void handleData(ITmfEvent data) {
-                    // Called for each event
                     super.handleData(data);
                     if (!(data instanceof PcapDslEvent)) {
                         return;
@@ -232,7 +250,6 @@ public class Helper {
             try {
                 request.waitForCompletion();
             } catch (InterruptedException e) {
-                // Request was canceled.
                 return new HashMap<String, Integer>();
             }
 
@@ -242,6 +259,15 @@ public class Helper {
         return protocolMap;
     }
 
+    /**
+     * Extract and concatenate the values for the given key from the nested
+     * packetMap structure up to the given nestingLevel.
+     * 
+     * @param packetMap
+     * @param key
+     * @param nestingLevel
+     * @return
+     */
     public static String getMergedString(Map<String, Object> packetMap, String key, int nestingLevel) {
         StringBuilder sb = new StringBuilder();
         Map<String, Object> tmpMap = packetMap;
@@ -263,7 +289,15 @@ public class Helper {
 
         return sb.toString();
     }
-    
+
+    /**
+     * 
+     * Get the configured DSL expression. If the corresponding preferences
+     * setting refers to a file, the DSL is read from the file. Otherwise, a
+     * default expression is returned.
+     * 
+     * @return
+     */
     public static String getDslExpression() {
         final String dslFilePath = Activator.getDefault().getPreferenceStore().getString(Constants.DSL_FILE_CONFIG_KEY);
         System.out.println("Got DSL file path from preferences: " + dslFilePath);
@@ -288,7 +322,7 @@ public class Helper {
 
         System.out.println("Using DSL expression: ");
         System.out.println(dslExpression);
-        
+
         return dslExpression;
     }
 }

@@ -1,5 +1,14 @@
 package pcap.dsl.core.ui.preferences;
 
+/*
+ * Copyright 2017, Ruediger Gad
+ * 
+ * This software is released under the terms of the Eclipse Public License 
+ * (EPL) 1.0. You can find a copy of the EPL at: 
+ * http://opensource.org/licenses/eclipse-1.0.php
+ * 
+ */
+
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.FileFieldEditor;
 import org.eclipse.jface.preference.StringFieldEditor;
@@ -10,6 +19,13 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 import pcap.dsl.core.Activator;
 import pcap.dsl.core.config.Constants;
 
+/**
+ * Preference page for settings related to the DSL-based packet capture
+ * processing.
+ * 
+ * @author &lt;r.c.g@gmx.de&gt;
+ *
+ */
 public class DslPreferencePage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
 
     public DslPreferencePage() {

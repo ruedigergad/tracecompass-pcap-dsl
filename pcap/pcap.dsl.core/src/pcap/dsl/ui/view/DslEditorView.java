@@ -1,5 +1,14 @@
 package pcap.dsl.ui.view;
 
+/*
+ * Copyright 2017, Ruediger Gad
+ * 
+ * This software is released under the terms of the Eclipse Public License 
+ * (EPL) 1.0. You can find a copy of the EPL at: 
+ * http://opensource.org/licenses/eclipse-1.0.php
+ * 
+ */
+
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
@@ -44,6 +53,12 @@ import pcap.dsl.core.event.PcapDslEvent;
 import pcap.dsl.core.trace.PcapDslFile;
 import pcap.dsl.core.util.Helper;
 
+/**
+ * Proof-of-concept for development support for DSL expressions.
+ * 
+ * @author &lt;r.c.g@gmx.de&gt;
+ *
+ */
 public class DslEditorView extends TmfView {
 
     public static final String ID = "pcap.dsl.core.DslEditorView";
