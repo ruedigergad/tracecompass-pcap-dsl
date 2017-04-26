@@ -14,6 +14,7 @@ import org.eclipse.tracecompass.tmf.core.event.ITmfEvent;
 import org.eclipse.tracecompass.tmf.core.event.aspect.ITmfEventAspect;
 
 import pcap.dsl.core.event.PcapDslEvent;
+import pcap.dsl.core.util.Helper;
 
 /**
  * 
@@ -42,7 +43,7 @@ public class PcapDslDestinationAspect implements ITmfEventAspect<String> {
 
     @Override
     public String resolve(ITmfEvent event) {
-        return AspectMapHelper.concatFields(event, "dst");
+        return Helper.concatFields(event, "dst");
     }
 
 }
