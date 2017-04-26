@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014 Ericsson
+ * Copyright (c) 2014 Ericsson, 2017 Ruediger Gad
  *
  * All rights reserved. This program and the accompanying materials are
  * made available under the terms of the Eclipse Public License v1.0 which
@@ -8,6 +8,7 @@
  *
  * Contributors:
  *   Vincent Perot - Initial API and implementation
+ *   Ruediger Gad  - Adjustments for processing maps as produced by the DSL-based processing.
  *******************************************************************************/
 
 package pcap.dsl.core.stream;
@@ -32,7 +33,7 @@ import pcap.dsl.core.util.Helper;
  * For example, a TCP stream is a collection of packets that share the same MAC
  * address, IP address, and Port couple.
  *
- * @author Vincent Perot
+ * @author Vincent Perot, Ruediger Gad &lt;r.c.g@gmx.de&gt;
  */
 public class DslPacketMapStream {
 
@@ -43,7 +44,7 @@ public class DslPacketMapStream {
 
     private String aAddress;
     private String bAddress;
-    
+
     private long fNbPacketsAtoB;
     private long fNbPacketsBtoA;
     private long fNbBytesAtoB;
@@ -83,13 +84,13 @@ public class DslPacketMapStream {
         if (packetMap == null) {
             return;
         }
-        
+
         String tmpAAddress = Helper.getMergedString(packetMap, Constants.PACKET_MAP_SRC_KEY, nestingLevel);
         if (aAddress == null) {
             aAddress = tmpAAddress;
             System.out.println("aAddress = " + aAddress);
         }
-        
+
         String tmpBAddress = Helper.getMergedString(packetMap, Constants.PACKET_MAP_DST_KEY, nestingLevel);
         if (bAddress == null) {
             bAddress = tmpBAddress;
@@ -99,29 +100,30 @@ public class DslPacketMapStream {
         // Update packet and byte number
         if (aAddress.equals(tmpAAddress) && bAddress.equals(tmpBAddress)) {
             fNbPacketsAtoB++;
-//            fNbBytesAtoB += packet.getOriginalLength();
+            // fNbBytesAtoB += packet.getOriginalLength();
         } else if (aAddress.equals(tmpBAddress) && bAddress.equalsIgnoreCase(tmpAAddress)) {
             fNbPacketsBtoA++;
-//            fNbBytesBtoA += packet.getOriginalLength();
+            // fNbBytesBtoA += packet.getOriginalLength();
         } else {
             throw new IllegalStateException();
         }
 
         // Update start and stop time
         // Stream timestamp is ALWAYS in nanoseconds.
-//        long timestamp;
-//        switch (packet.getTimestampScale()) {
-//        case MICROSECOND:
-//            timestamp = packet.getTimestamp() * 1000;
-//            break;
-//        case NANOSECOND:
-//            timestamp = packet.getTimestamp();
-//            break;
-//        default:
-//            throw new IllegalArgumentException("The timestamp precision is not valid!"); //$NON-NLS-1$
-//        }
-//        fStartTime = Math.min(fStartTime, timestamp);
-//        fEndTime = Math.max(fEndTime, timestamp);
+        // long timestamp;
+        // switch (packet.getTimestampScale()) {
+        // case MICROSECOND:
+        // timestamp = packet.getTimestamp() * 1000;
+        // break;
+        // case NANOSECOND:
+        // timestamp = packet.getTimestamp();
+        // break;
+        // default:
+        // throw new IllegalArgumentException("The timestamp precision is not
+        // valid!"); //$NON-NLS-1$
+        // }
+        // fStartTime = Math.min(fStartTime, timestamp);
+        // fEndTime = Math.max(fEndTime, timestamp);
     }
 
     /**
@@ -265,11 +267,11 @@ public class DslPacketMapStream {
         }
         return fNbBytesBtoA / getDuration();
     }
-    
+
     public String getAAddress() {
         return aAddress;
     }
-    
+
     public String getBAddress() {
         return bAddress;
     }

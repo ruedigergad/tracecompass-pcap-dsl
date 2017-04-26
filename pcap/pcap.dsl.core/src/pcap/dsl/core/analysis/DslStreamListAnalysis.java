@@ -1,7 +1,7 @@
 package pcap.dsl.core.analysis;
 
 /*******************************************************************************
- * Copyright (c) 2014 Ericsson
+ * Copyright (c) 2014 Ericsson, 2017 Ruediger Gad
  *
  * All rights reserved. This program and the accompanying materials are
  * made available under the terms of the Eclipse Public License v1.0 which
@@ -10,6 +10,7 @@ package pcap.dsl.core.analysis;
  *
  * Contributors:
  *   Vincent Perot - Initial API and implementation
+ *   Ruediger Gad  - Adjustments for processing maps as produced by the DSL-based processing.
  *******************************************************************************/
 
 import java.util.HashMap;
@@ -35,7 +36,7 @@ import pcap.dsl.core.util.Helper;
 /**
  * A pcap-specific analysis that parse an entire trace to find all the streams.
  *
- * @author Vincent Perot
+ * @author Vincent Perot, Ruediger Gad &lt;r.c.g@gmx.de&gt;
  */
 public class DslStreamListAnalysis extends TmfAbstractAnalysisModule {
 
@@ -85,16 +86,16 @@ public class DslStreamListAnalysis extends TmfAbstractAnalysisModule {
     @Override
     protected boolean executeAnalysis(IProgressMonitor monitor) throws TmfAnalysisException {
         System.out.println("DslStreamListAnalysis.executeAnalysis(...)");
-        
+
         IProgressMonitor mon = (monitor == null ? new NullProgressMonitor() : monitor);
         ITmfTrace tmpTrace = getTrace();
         if (!(tmpTrace instanceof PcapDslTrace)) {
             /* This analysis was cancelled in the meantime */
             return false;
         }
-        
+
         PcapDslTrace trace = (PcapDslTrace) tmpTrace;
-        
+
         this.fBuilders.clear();
         Map<String, Integer> protocols = Helper.getProtocolMap(trace);
         for (Map.Entry<String, Integer> e : protocols.entrySet()) {
@@ -106,8 +107,7 @@ public class DslStreamListAnalysis extends TmfAbstractAnalysisModule {
             request.cancel();
         }
 
-        request = new TmfEventRequest(PcapDslEvent.class,
-                TmfTimeRange.ETERNITY, 0L, ITmfEventRequest.ALL_DATA,
+        request = new TmfEventRequest(PcapDslEvent.class, TmfTimeRange.ETERNITY, 0L, ITmfEventRequest.ALL_DATA,
                 ITmfEventRequest.ExecutionType.BACKGROUND) {
 
             @Override
@@ -176,4 +176,3 @@ public class DslStreamListAnalysis extends TmfAbstractAnalysisModule {
     }
 
 }
-

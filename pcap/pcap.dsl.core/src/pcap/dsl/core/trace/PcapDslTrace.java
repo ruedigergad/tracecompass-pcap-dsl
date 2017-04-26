@@ -1,5 +1,17 @@
 package pcap.dsl.core.trace;
 
+/*
+ * Copyright 2017, Ruediger Gad and others (See comments "@@@@@" in source code.)
+ * 
+ * This software is released under the terms of the Eclipse Public License 
+ * (EPL) 1.0. You can find a copy of the EPL at: 
+ * http://opensource.org/licenses/eclipse-1.0.php
+ * 
+ * The other parts of this file that were taken from existing code
+ * (Marked with "@@@@@".) were also licensed under the terms of the EPL.
+ * 
+ */
+
 import java.io.IOException;
 import java.nio.channels.ClosedChannelException;
 import java.nio.file.Paths;
@@ -27,6 +39,17 @@ import pcap.dsl.core.aspects.PcapDslSourceAspect;
 import pcap.dsl.core.event.PcapDslEvent;
 import pcap.dsl.core.event.PcapDslEventFactory;
 
+/**
+ * 
+ * Trace specific for the DSL-based data processing. The major differences to
+ * {@link PcapTrace} are that a {@link PcapDslFile} instance is used for
+ * accessing the pcap file and the {@link PcapDslEventFactory} is used for
+ * creating event instance.
+ * 
+ * @author Ruediger Gad &lt;r.c.g@gmx.de&gt; and others (See comments "@@@@@" in
+ *         source code.)
+ *
+ */
 public class PcapDslTrace extends PcapTrace {
 
     private static final Collection<ITmfEventAspect<?>> PCAP_DSL_ASPECTS = ImmutableList.of(
@@ -100,7 +123,5 @@ public class PcapDslTrace extends PcapTrace {
 
         // Generate an event from this packet and return it.
         return PcapDslEventFactory.createEvent(packetMap, pcap, this);
-        // return PcapEventFactory.createEvent(packet, pcap, this);
-
     }
 }

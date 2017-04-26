@@ -1,5 +1,17 @@
 package pcap.dsl.core.event;
 
+/*
+ * Copyright 2017, Ruediger Gad and others (See comments "@@@@@" in source code.)
+ * 
+ * This software is released under the terms of the Eclipse Public License 
+ * (EPL) 1.0. You can find a copy of the EPL at: 
+ * http://opensource.org/licenses/eclipse-1.0.php
+ * 
+ * The other parts of this file that were taken from existing code
+ * (Marked with "@@@@@".) were also licensed under the terms of the EPL.
+ * 
+ */
+
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,6 +31,12 @@ import org.eclipse.tracecompass.tmf.core.timestamp.TmfTimestamp;
 import pcap.dsl.core.config.Constants;
 import pcap.dsl.core.trace.PcapDslFile;
 
+/**
+ * 
+ * @author Ruediger Gad &lt;r.c.g@gmx.de&gt; and others (See comments "@@@@@" in
+ *         source code.)
+ *
+ */
 public class PcapDslEventFactory {
 
     public static PcapDslEvent createEvent(Map<String, Object> packetMap, PcapFile pcapFile, PcapTrace pcapTrace) {

@@ -1,5 +1,17 @@
 package pcap.dsl.core.trace;
 
+/*
+ * Copyright 2017, Ruediger Gad and others (See comments "@@@@@" in source code.)
+ * 
+ * This software is released under the terms of the Eclipse Public License 
+ * (EPL) 1.0. You can find a copy of the EPL at: 
+ * http://opensource.org/licenses/eclipse-1.0.php
+ * 
+ * The other parts of this file that were taken from existing code
+ * (Marked with "@@@@@".) were also licensed under the terms of the EPL.
+ * 
+ */
+
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -16,6 +28,12 @@ import clojure.lang.IFn;
 import dsbdp.DslHelper;
 import pcap.dsl.core.util.Helper;
 
+/**
+ * 
+ * @author Ruediger Gad &lt;r.c.g@gmx.de&gt; and others (See comments "@@@@@" in
+ *         source code.)
+ *
+ */
 public class PcapDslFile extends PcapFile {
 
     public static final String PCAP_RANK = "__rank";
@@ -33,7 +51,7 @@ public class PcapDslFile extends PcapFile {
     /*
      * (non-Javadoc)
      * 
-     * @@@@@ Taken from PcapFile:
+     * @@@@@ Based on the equally named method in PcapFile:
      * 
      * @see org.eclipse.tracecompass.internal.pcap.core.trace.PcapFile#
      * parseNextPacket()
