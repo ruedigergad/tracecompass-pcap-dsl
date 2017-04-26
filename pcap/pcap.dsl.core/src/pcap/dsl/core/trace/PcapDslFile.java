@@ -75,30 +75,21 @@ public class PcapDslFile extends PcapFile {
         pcapPacketData.flip();
 
         Map<String, Object> pcapPacketDataMap = null;
-        if (pcapPacketData.hasArray()) {
-//            System.out.println("Getting byte array data...");
+        if (dslFn != null && pcapPacketData.hasArray()) {
             byte[] baData = pcapPacketData.array();
+            Object dslOut = dslFn.invoke(baData);
 
-            if (dslFn != null) {
-                //System.out.println("Processing byte array with DSL fn...");
-                Object dslOut = dslFn.invoke(baData);
-                //System.out.println("DSL Output: " + String.valueOf(dslOut));
-
-                if (dslOut instanceof Map) {
-                    pcapPacketDataMap = (Map<String, Object>) dslOut;
-                    pcapPacketDataMap.put(PCAP_HEADER, pcapPacketHeader);
-                    pcapPacketDataMap.put(PCAP_RANK, fCurrentRank);
-                    pcapPacketDataMap.put(PCAP_RAW_DATA, baData);
-                }
+            if (dslOut instanceof Map) {
+                pcapPacketDataMap = (Map<String, Object>) dslOut;
+                pcapPacketDataMap.put(PCAP_HEADER, pcapPacketHeader);
+                pcapPacketDataMap.put(PCAP_RANK, fCurrentRank);
+                pcapPacketDataMap.put(PCAP_RAW_DATA, baData);
             }
         }
 
         fFileIndex.put(++fCurrentRank, fFileChannel.position());
 
         return pcapPacketDataMap;
-        // return new PcapPacket(this, null, pcapPacketHeader, pcapPacketData,
-        // fCurrentRank - 1);
-
     }
 
     private void initDslExtraction() {
