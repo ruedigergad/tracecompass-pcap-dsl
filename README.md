@@ -1,3 +1,22 @@
+
+Begin of Note
+
+Note: This is not the official Trace Compass repository.
+The code in this repository was forked from Trace Compass.
+If you are looking for the official Trace Compass repository etc. go to the following websites:
+
+
+
+The aim of the code in this repository is to serve as an experiment and proof-of-concept prototype for importing packet capture traces into Trace Compass via a Clojure based Domain Specific Language (DSL).
+The aim of the DSL-based packet capture import is to ease the import of packet capture traces by providing a more flexible, dynamic, and extendible for importing packet capture traces.
+
+The author of the changes done in this repository is Ruediger Gad (r.c.g@gmx.de).
+All changes done in this repository are released under the terms of the Eclipse Public License (EPL) 1.0.
+This is the same license as for the original Trace Compass code on which this work is based on.
+
+End of Note
+
+
 Eclipse Trace Compass
 =====================
 
