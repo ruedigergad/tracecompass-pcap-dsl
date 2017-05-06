@@ -5,7 +5,9 @@ Note: This is not the official Trace Compass repository.
 The code in this repository was forked from Trace Compass.
 If you are looking for the official Trace Compass repository etc. go to the following websites:
 
+http://tracecompass.org/
 
+http://git.eclipse.org/c/tracecompass/org.eclipse.tracecompass.git/
 
 The aim of the code in this repository is to serve as an experiment and proof-of-concept prototype for importing packet capture traces into Trace Compass via a Clojure based Domain Specific Language (DSL).
 The aim of the DSL-based packet capture import is to ease the import of packet capture traces by providing a more flexible, dynamic, and extendible for importing packet capture traces.
